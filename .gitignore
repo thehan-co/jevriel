@@ -10,3 +10,8 @@ benchmark/config.local.json
 benchmark/published-probe/
 *.tgz
 launch/review.html
+assets/generation-record.json
+assets/jevriel-flight.png
+assets/jevriel-adviser.png
+assets/jevriel-flight-final.png
+assets/jevriel-adviser-final.png
