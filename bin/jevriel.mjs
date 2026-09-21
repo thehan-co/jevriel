@@ -30,7 +30,7 @@ async function setup(){
  console.log('TypeSafe connection verified. Ready to start JEVing.');return true;
 }
 function registerCodex(){
- const base=join(homedir(),'.agents','plugins'), target=join(base,'plugins','jevriel');
+ const base=join(homedir(),'.agents','plugins'), target=join(homedir(),'plugins','jevriel');
  const file=join(base,'marketplace.json');
  let market=existsSync(file)?JSON.parse(readFileSync(file,'utf8')):{name:'personal',interface:{displayName:'Personal'},plugins:[]};
  if(!/^[A-Za-z0-9_-]+$/.test(market.name)||!Array.isArray(market.plugins))throw new Error('Existing personal marketplace has an invalid shape; it was not changed.');

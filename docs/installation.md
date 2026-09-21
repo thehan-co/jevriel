@@ -11,7 +11,7 @@ Use only the line for your host. Requirements: Node.js 20+, npm, Git and the hos
 
 ## What the installer does
 
-For Codex it copies the public plugin into `~/.agents/plugins/plugins/jevriel`, preserves existing personal marketplace entries, saves a backup and calls `codex plugin add`. For Claude Code it adds the GitHub marketplace and installs `jevriel@jevriel`. It then performs TypeSafe onboarding. Start a new host session after installation.
+For Codex it copies the public plugin into `~/plugins/jevriel`, preserves existing personal marketplace entries, saves a backup and calls `codex plugin add`. For Claude Code it adds the GitHub marketplace and installs `jevriel@jevriel`. It then performs TypeSafe onboarding. Start a new host session after installation.
 
 Onboarding checks `TYPESAFE_API_KEY` first, then `~/.config/jevriel/credentials.json`. If neither is available and the terminal is interactive, it requests the key without echoing it. The optional local credential file is plaintext protected by owner-only file permissions, not an encrypted keychain. For managed environments, inject the environment variable from your normal secret manager and avoid the file entirely. Never put a key in a command argument, chat, repository or issue.
 

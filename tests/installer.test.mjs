@@ -13,8 +13,8 @@ test('Codex installer preserves other entries and ships clean tools with deferre
   const p=spawnSync(process.execPath,['bin/jevriel.mjs','install','codex'],{env:{...process.env,HOME:dir,JEVRIEL_CONFIG_DIR:join(dir,'config'),TYPESAFE_API_KEY:'',PATH:bin+':'+process.env.PATH},encoding:'utf8'});
   assert.equal(p.status,0,p.stderr);assert.match(p.stdout,/connection setup required/);
   const market=JSON.parse(readFileSync(join(base,'marketplace.json')));assert.equal(market.plugins.length,2);assert.equal(market.plugins[0].name,'existing');
-  assert.ok(existsSync(join(base,'plugins/jevriel/skills/jevriel/SKILL.md')));
-  assert.ok(existsSync(join(base,'plugins/jevriel/server/index.mjs')));
-  assert.ok(!existsSync(join(base,'plugins/jevriel/benchmark/runs')));
+  assert.ok(existsSync(join(dir,'plugins/jevriel/skills/jevriel/SKILL.md')));
+  assert.ok(existsSync(join(dir,'plugins/jevriel/server/index.mjs')));
+  assert.ok(!existsSync(join(dir,'plugins/jevriel/benchmark/runs')));
  }finally{rmSync(dir,{recursive:true,force:true});}
 });
