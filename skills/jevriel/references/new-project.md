@@ -9,3 +9,5 @@ Build the baseline first or preserve an existing equivalent. Use a fixture-drive
 Acceptance: known routes behave correctly, unknowns escape, invalid/service-error responses fall back, and side effects obey policy. Then run a Flight Test against an LLM performing the same narrow job, using equivalent information and useful structured output. Also compare a simple rules implementation when the job may not need a model.
 
 Deliver the integration and a compact explanation of where it helps. Rank subsequent opportunities by measured frequency and savings, expected quality, engineering effort and error consequence. Do not claim whole-app speedup from one fast classification call.
+
+For an open-ended app idea, use the [composition patterns](composition.md) to explore a few useful behaviors before choosing one. Consider handler arguments, source reconstruction and interactive weighted views as well as classification. A concrete implementation request does not require a separate brainstorm.

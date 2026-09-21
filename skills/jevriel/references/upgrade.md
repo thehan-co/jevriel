@@ -9,3 +9,5 @@ Begin in shadow mode where the existing path remains authoritative and JEV produ
 Example: replace an LLM passage-relevance call with independent Noul questions, then evaluate retrieval recall and final-answer quality. A faster filter that drops decisive evidence is a regression. Candidate matching needs a no-match result; wrong merges require special error accounting.
 
 Adopt only when the user's quality and operational requirements hold. If the gain is marginal, retain the simpler existing path. Record a small next-embedding map, including at least one location where JEV adds no value.
+
+Inspect repeated judgments as well as individual calls: stable dimensions may be computed once and reused when display weights change. Independent branch questions may share a request, provided their premises and inputs are already known. See [composition patterns](composition.md); measure added question tokens and invalidation costs.

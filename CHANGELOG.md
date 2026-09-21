@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.3
+
+- Align integration guidance with TypeSafe’s official skill and live pattern documentation.
+- Add targeted docs discovery, structured question design, speculative parallel questions and reusable scoring patterns.
+- Clarify wrapper limits and provenance; retain existing provider setup and benchmark evidence boundaries.
+
+
 ## 0.1.2
 
 - Put existing-MCP reuse first in interactive onboarding.

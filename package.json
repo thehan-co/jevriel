@@ -1,6 +1,6 @@
 {
   "name": "jevriel",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Start JEVing your work: inspect, integrate and measure TypeSafe JEV in apps and agents.",
   "type": "module",
   "license": "Apache-2.0",

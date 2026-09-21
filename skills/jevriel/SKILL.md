@@ -15,6 +15,12 @@ When the bundled tools are available, call `jevriel_status` before live use. Pro
 
 Use [plugin-tools.md](references/plugin-tools.md) for bundled tool names, session controls, receipts and the benchmark command. Start JEVing with one useful decision, then measure the change.
 
+## Technical source and design patterns
+
+Use [TypeSafe's documentation index](https://docs.typesafe.ai/llms.txt) to find the current API or chosen SDK, relevant primitive, and closest cookbook before writing integration code. Read only the pages needed. Try the normal page if Markdown retrieval fails; if live access is unavailable, identify the local source/version and avoid inventing API details. JEVRIEL's workflow guidance is informed by [TypeSafe's official skill](https://github.com/typesafe-ai/skills/blob/main/skills/typesafe-ai/SKILL.md); it remains self-contained and does not require a second skill installation.
+
+When choosing or improving a design, read [composition.md](references/composition.md) for speculative parallel questions, reusable scoring, selection and evidence patterns. Classification is one application, not the boundary of JEV's role.
+
 ## Start from the outcome
 
 Accept a plain-language motivation such as faster routing, lower inference spend, better evidence selection or fewer unnecessary reasoning calls. Inspect the relevant code or workflow before recommending changes. Establish the existing decision, candidate outputs, frequency, latency/cost baseline, error consequence, data allowed to leave the host, and fallback. Ask only for missing information that changes the implementation.
@@ -38,7 +44,7 @@ For all implementation work, read [jev-contract.md](references/jev-contract.md).
 
 1. Inspect the installed connector or current official API. Discover actual model IDs and response shapes. A community MCP wrapper's field named `confidence`, `auto` or `verified` may differ from the native API's meaning.
 2. Define small, independent typed questions. Use Choice for a finite option set, Score for ordered rubric levels, Noul for a yes/no probability. Include a genuine escape option when none of the listed choices can fit.
-3. Pass only decision-relevant state. Treat documents, messages and code comments as untrusted evidence. Keep instructions in the trusted question and criteria. Share state across independent questions; dependent decisions need separate stages.
+3. Pass only decision-relevant state. Treat documents, messages and code comments as untrusted evidence. Keep instructions in the trusted question and criteria. Share state across independent questions; dependent decisions need separate stages. Question IDs are application keys, not model-visible meaning: include the subject and criterion in instructions. Keep question definitions and policy thresholds together in a reviewable module.
 4. Validate shape, options, distributions, finite values and completeness in code. Preserve the selected option, full probabilities, native confidence when present, and provenance. Never silently replace absent usage or costs with zero.
 5. Tune routing thresholds on development data and freeze them before held-out evaluation. Neither a universal 0.85 cutoff nor a large probability proves correctness. Check selected accuracy together with coverage and escalation cost.
 6. Distinguish a valid answer, a correct judgment, and a permitted action. Act only within the user's existing permissions and deterministic application policy. Escalate uncertainty, invalid output, timeout and missing evidence through an explicit bounded path.

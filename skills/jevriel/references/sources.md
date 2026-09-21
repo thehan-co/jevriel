@@ -4,6 +4,9 @@ Research checked 2026-09-21. TypeSafe JEV only. Refresh API, pricing and model c
 
 ## Primary technical sources
 
+- [Official TypeSafe skill](https://github.com/typesafe-ai/skills/blob/main/skills/typesafe-ai/SKILL.md) and [installation guidance](https://docs.typesafe.ai/agent-skill): reviewed against the user-supplied skill. JEVRIEL integrates design guidance in its own words; no additional skill installation is required.
+- [Live documentation index](https://docs.typesafe.ai/llms.txt): targeted discovery for API/SDK, primitive and cookbook reads.
+
 - [TypeSafe introduction](https://docs.typesafe.ai/introduction): model role and typed decisions.
 - [API contract](https://docs.typesafe.ai/api): native requests and responses.
 - [Build guidance](https://docs.typesafe.ai/concepts/how-to-build-with-system-one): independent questions, criteria and composition.

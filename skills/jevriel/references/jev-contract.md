@@ -2,7 +2,7 @@
 
 Checked 2026-09-21 against TypeSafe's public API and model documentation. Refresh before implementation; pin the returned version in benchmark receipts.
 
-JEV consumes text state and typed questions. It returns decisions rather than arbitrary generated prose. Native Choice returns `choice`, `probabilities`, and `confidence`; Score returns a probability-weighted `score`, `legend`, `probabilities`, and `confidence`; Noul returns `noul`, the probability of yes, with no separate confidence field.
+JEV consumes text or structured JSON state and typed questions. It returns decisions rather than arbitrary generated prose. Native Choice returns `choice`, `probabilities`, and `confidence`; Score returns a probability-weighted `score`, `legend`, `probabilities`, and `confidence`; Noul returns `noul`, the probability of yes, with no separate confidence field.
 
 Confidence is derived from a distribution, not automatically the probability that a decision is correct. For Choice, preserve the selected option's probability and runner-up margin separately. Noul 0.02 means a low probability of yes; it is not a low-certainty yes/no judgment. Evaluate calibration on the actual task. Score expectations are ordinal judgments, not reliable numerical measurements.
 
@@ -41,3 +41,5 @@ Sources: [API](https://docs.typesafe.ai/api), [confidence](https://docs.typesafe
 # Implementation evidence note
 
 In the author's separate 429-document paired classification experiment, the JEV MCP path produced 12 invalid batches out of 489, including missing/null classifications. Validate the complete expected item set at the application boundary even when the native model's output contract is typed. Distinguish transport/wrapper/schema reliability from semantic accuracy, and record whether batch acceptance is atomic. The experiment's faster request timing did not establish an accuracy advantage; human review remained pending.
+
+Question IDs are not sent to the model. Instructions must identify the subject and intended judgment without relying on the ID. Structured instructions and criteria can supply examples and exclusions; check the selected wrapper schema before using them.
