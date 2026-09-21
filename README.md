@@ -1,18 +1,18 @@
 <p align="center">
-  <img src="assets/jevriel-flight-freehand-v1.png" alt="JEVRIEL: a giant-winged angel lifts a blue AI coding agent through the clouds. Give your AI JEV wings." width="480">
+  <img src="assets/jevriel-header-color.png" alt="JEVRIEL: Give your AI JEV wings. An angel carries a blue AI agent through a blue and gold sky." width="640">
 </p>
 
 # JEVRIEL
 
-## Give your AI JEV wings
+**Give your AI JEV wings.**
 
-**Start JEVing your work. Build with TypeSafe JEV, upgrade LLM-only apps, and measure the benefits.**
+A skill and plugin that helps your AI agent build with TypeSafe JEV, upgrade existing LLM-only apps, and measure the results.
 
-JEVRIEL is built to be the easiest portal for builders, developers and curious AI users to take on JEV's benefits. Its skill and plugins help you kick off a new project or upgrade existing LLM-only code.
+[Install](#install-in-one-line) · [Use cases](#four-ways-to-use-jevriel) · [Benchmark](#the-jevriel-flight-test) · [Documentation](docs/installation.md) · [Contribute](CONTRIBUTING.md)
 
-It focuses on the decisions inside your app: what to route, which evidence to use, which known option fits, and when to ask for help. It helps your coding agent find the right places for JEV, implement them, and give you a short, honest before-and-after report.
+**Codex · Claude Code · Portable skill** | [Apache-2.0 code and docs](LICENSE) | Early release
 
-[Install in one line](#install-in-one-line) · [Start with the skill](skills/jevriel/SKILL.md) · [Pick a use case](#four-ways-to-use-jevriel) · [Run a Flight Test](#the-jevriel-flight-test) · [Read the evidence](skills/jevriel/references/sources.md)
+Start JEVing your work: find a useful decision point, integrate JEV, and get a short before-and-after report on latency, cost and quality. Provider setup is required unless you already have a working JEV connection. Frontier evaluation is still in progress.
 
 ### Why I built this
 
