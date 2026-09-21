@@ -9,7 +9,16 @@
       "env_vars": [
         "TYPESAFE_API_KEY",
         "JEVRIEL_MODEL",
-        "JEVRIEL_LEDGER_DIR"
+        "JEVRIEL_LEDGER_DIR",
+        "JEVRIEL_PROVIDER",
+        "JEVRIEL_CONFIG_DIR",
+        "CLOUDFLARE_ACCOUNT_ID",
+        "CLOUDFLARE_API_TOKEN",
+        "JEV_CLOUDFLARE_API_TOKEN",
+        "OPENROUTER_API_KEY",
+        "JEVRIEL_ENDPOINT",
+        "JEVRIEL_API_KEY",
+        "JEVRIEL_ADAPTER_COMMAND"
       ],
       "env": {}
     }

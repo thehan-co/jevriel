@@ -1,6 +1,6 @@
 # New coding project
 
-Start with the app's intended behavior and its decision points. Sketch the smallest working path: input, exact checks in code, Jev judgment where useful, handler or fallback, result. Keep Jev behind an adapter so a model outage or version change does not spread through the app.
+Start with the app's intended behavior and its decision points. Sketch the smallest working path: input, exact checks in code, JEV judgment where useful, handler or fallback, result. Keep JEV behind an adapter so a model outage or version change does not spread through the app.
 
 Example: a support app must send a request to billing, engineering, sales or review. Define each queue with precedence and counterexamples. Ask independent questions about topic and urgency in one request; compose the route in code. A request for a refund is not authorization to pay one.
 

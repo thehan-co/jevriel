@@ -15,8 +15,8 @@ Copy only measurements actually supplied or captured. Missing comparator correct
 ## Three arms, two scopes
 
 A: **LLM-only** performs the narrow decision using an appropriate structured output contract.
-B: **Jev-only** makes the same decision with typed questions and the same state/options.
-C: **Jev + fallback** sends uncertain, invalid and failed judgments to the same LLM as A. Measure the live cascade separately. An offline projection from A and B is a projection, not measured C latency.
+B: **JEV-only** makes the same decision with typed questions and the same state/options.
+C: **JEV + fallback** sends uncertain, invalid and failed judgments to the same LLM as A. Measure the live cascade separately. An offline projection from A and B is a projection, not measured C latency.
 
 Measure both the decision component and, when possible, the user-visible workflow. Freeze the semantic question and equivalent evidence; provider-specific wrappers can differ but must be retained. Add a rules baseline when useful. Treat local-versus-hosted measurements as a system-path comparison, never as a pure model-speed comparison.
 
@@ -50,7 +50,7 @@ Cost saving uses the same formula only when both totals cover the same cost scop
 
 ```text
 JEVRIEL FLIGHT TEST 1.0 | PROBE / CONTROLLED / OBSERVE | task | n cases, repeats
-Latency: LLM ... -> Jev ... -> hybrid ...; median / p95, scope
+Latency: LLM ... -> JEV ... -> hybrid ...; median / p95, scope
 Cost: ... per 1k attempts; billed / estimate / unknown; compute scope
 Fidelity: ... correct / attempted; class errors; label provenance
 Trust: auto coverage ...; selected accuracy ...; escapes ...; failures ...
@@ -60,4 +60,4 @@ Next: the next specific decision boundary worth testing
 
 The full record backs this card: immutable data hash, run ID/time, source/config hashes, exact returned models, raw answers, attempt timings and usage, pricing provenance, labels, scorer version and output. Save it beside the code, outside private source material.
 
-The repository's `benchmark/flight_test.py` supplies a standard-library scorer and runnable classification probe. It reports explicit unknown cost and supports command adapters for Jev, direct TypeSafe REST and a JSON-constrained local Ollama baseline. Broader frontier-provider comparisons should implement the same adapter contract after discovering their real APIs. Do not claim cross-provider validation from one local baseline.
+The repository's `benchmark/flight_test.py` supplies a standard-library scorer and runnable classification probe. It reports explicit unknown cost and supports command adapters for JEV, direct TypeSafe REST and a JSON-constrained local Ollama baseline. Broader frontier-provider comparisons should implement the same adapter contract after discovering their real APIs. Do not claim cross-provider validation from one local baseline.

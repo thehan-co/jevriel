@@ -1,6 +1,6 @@
 # Sources and evidence boundary
 
-Research checked 2026-09-21. TypeSafe Jev only. Refresh API, pricing and model contracts before a live integration.
+Research checked 2026-09-21. TypeSafe JEV only. Refresh API, pricing and model contracts before a live integration.
 
 ## Primary technical sources
 
@@ -22,7 +22,7 @@ Research checked 2026-09-21. TypeSafe Jev only. Refresh API, pricing and model c
 - [Reddit launch discussion, 19 September](https://www.reddit.com/r/machinelearningnews/comments/1wku8qn/typesafe_ai_releases_jev_a_system_one_model_that/): readers ask for broader evaluation. No benchmark conclusion is drawn from votes or comments.
 - [ASSAY-001](https://github.com/jourdanlabs/assay-001): an independent author's published protocol and raw-result repository reports different calibration outcomes on two datasets. Inspected its report and scope; not independently rerun for JEVRIEL. This is a reason to measure calibration locally, not evidence for a universal accuracy claim.
 - [Official Python SDK issue #2](https://github.com/typesafe-ai/typesafe-sdk-python/issues/2): a reported quickstart-output mismatch. An example output in documentation is not an expected test oracle.
-- [Syntax: Jev Explained, Demos and Use Cases](https://www.youtube.com/watch?v=QbYBRjOaGOo), 17 September: verified page description and chapter metadata discuss classification, code review, summary checks and routing. Chapter pointers: 06:11 classification, 09:45 code review, 10:14 summary checks, 11:26 routing. Full captions were unavailable during this research; do not present this as a watched/transcribed review. [Author's demo code](https://github.com/w3cj/jev-chat).
+- [Syntax: JEV Explained, Demos and Use Cases](https://www.youtube.com/watch?v=QbYBRjOaGOo), 17 September: verified page description and chapter metadata discuss classification, code review, summary checks and routing. Chapter pointers: 06:11 classification, 09:45 code review, 10:14 summary checks, 11:26 routing. Full captions were unavailable during this research; do not present this as a watched/transcribed review. [Author's demo code](https://github.com/w3cj/jev-chat).
 - [WorldofAI browser-use video](https://www.youtube.com/watch?v=SNJ3yuJ_QwY): title/page discovery only. The headline is not a reproduced speed result.
 
 ## Kahneman
@@ -33,7 +33,7 @@ Research checked 2026-09-21. TypeSafe Jev only. Refresh API, pricing and model c
 
 ## Benchmark price basis
 
-[TypeSafe's published model listing](https://docs.typesafe.ai/models), checked 21 September 2026: Jev 1.13 is $0.042 per million input tokens; output tokens are free. JEVRIEL's launch evaluation applies that published rate to reported usage, as a list-price estimate. The test ran through a gateway alias, so this is not an account invoice or a measurement of gateway billing. Provider promotions do not set the benchmark's price basis.
+[TypeSafe's published model listing](https://docs.typesafe.ai/models), checked 21 September 2026: JEV 1.13 is $0.042 per million input tokens; output tokens are free. JEVRIEL's launch evaluation applies that published rate to reported usage, as a list-price estimate. The test ran through a gateway alias, so this is not an account invoice or a measurement of gateway billing. Provider promotions do not set the benchmark's price basis.
 
 ## Evidence discipline
 

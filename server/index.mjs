@@ -4,7 +4,7 @@ import {definitions,execute} from './runtime.mjs';
 const answer=(id,result)=>({jsonrpc:'2.0',id,result});
 export async function handleMessage(m){
  if(m.id===undefined)return null;
- if(m.method==='initialize')return answer(m.id,{protocolVersion:'2025-06-18',capabilities:{tools:{}},serverInfo:{name:'jevriel',version:'0.1.0'},instructions:'Read the JEVRIEL skill. Run jevriel_status first. Returned judgments are advisory. Unknown costs are not zero.'});
+ if(m.method==='initialize')return answer(m.id,{protocolVersion:'2025-06-18',capabilities:{tools:{}},serverInfo:{name:'jevriel',version:'0.1.1'},instructions:'Read the JEVRIEL skill. Run jevriel_status first. Returned judgments are advisory. Unknown costs are not zero.'});
  if(m.method==='ping')return answer(m.id,{});
  if(m.method==='tools/list')return answer(m.id,{tools:definitions});
  if(m.method==='tools/call'){

@@ -41,6 +41,9 @@ def post(url, payload, key=None, timeout=45):
 
 def call(adapter, packet, timeout):
     kind = adapter['kind']
+    if kind == 'jevriel':
+        adapter = {'argv': ['node', str(ROOT/'jevriel-adapter.mjs')]}
+        kind = 'command'
     if kind == 'command':
         p = subprocess.run(adapter['argv'], input=json.dumps(packet), text=True,
                            capture_output=True, timeout=timeout, check=True)

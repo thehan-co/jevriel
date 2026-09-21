@@ -6,7 +6,7 @@ Confident, practical, lightly irreverent. Giant wings in the image; precise advi
 
 Hero: **Give your AI JEV wings**
 Secondary: **A little JEVine consultation**
-Supporting line: Teach your AI agent to build with TypeSafe Jev and measure the lift.
+Supporting line: Teach your AI agent to build with TypeSafe JEV and measure the lift.
 
 Humor lives in the unexpected relationship: a magnificent angel doing practical developer work. Use one light line per section or post. Never make certainty, user consent or safety the joke. JEVRIEL helps the agent; it does not claim divine correctness.
 

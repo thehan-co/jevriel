@@ -10,7 +10,7 @@ Before autonomous integration or reporting, follow [host-qualification.md](host-
 |---|---|
 | Native Markdown skills | Install the `jevriel` folder in the host's documented skill directory. Load only the chosen mode reference. |
 | File reading and terminal | Read SKILL.md, inspect the app and run the benchmark from the retained repository checkout. Ask for its path if only the skill folder was installed; never assume the runner was copied with it. |
-| Jev MCP | Discover actual tool schemas; record the wrapper version and how it transforms confidence or usage. |
+| JEV MCP | Discover actual tool schemas; record the wrapper version and how it transforms confidence or usage. |
 | Direct TypeSafe API | Use the native state/questions endpoint and validate the returned contract. |
 | LLM API with structured output | Use a supported JSON/schema constraint for a fair baseline; do not force prose and then charge it for parsing. |
 | No execution or credentials | Produce the concrete integration diff and commands with execution marked unrun; never invent results. |

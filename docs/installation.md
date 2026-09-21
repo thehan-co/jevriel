@@ -1,47 +1,43 @@
-# Installation and onboarding
+# Installation and provider onboarding
 
-Run one command for your host:
+Choose your host:
 
 ```bash
 npx --yes github:thehan-co/jevriel install codex
 npx --yes github:thehan-co/jevriel install claude
 ```
 
-Use only the line for your host. Requirements: Node.js 20+, npm, Git and the host CLI available on PATH. Python 3.10+ is needed only for the public benchmark. The GitHub package supplies an npm executable; it is not yet published in the npm registry. For a fixed revision, append `#COMMIT_SHA` to the GitHub package spec.
+Requirements: Node.js 20+, npm, Git and the host CLI. Python 3.10+ is needed only for the public benchmark. This installs the npm executable from GitHub; it is not an npm-registry publication.
 
-## What the installer does
+The Codex installer copies the plugin to `~/plugins/jevriel`, preserves personal marketplace entries and installs it. Claude adds the repository's marketplace and plugin. Start a new host session after installation.
 
-For Codex it copies the public plugin into `~/plugins/jevriel`, preserves existing personal marketplace entries, saves a backup and calls `codex plugin add`. For Claude Code it adds the GitHub marketplace and installs `jevriel@jevriel`. It then performs TypeSafe onboarding. Start a new host session after installation.
+## Choose where JEV runs
 
-Onboarding checks `TYPESAFE_API_KEY` first, then `~/.config/jevriel/credentials.json`. If neither is available and the terminal is interactive, it requests the key without echoing it. The optional local credential file is plaintext protected by owner-only file permissions, not an encrypted keychain. For managed environments, inject the environment variable from your normal secret manager and avoid the file entirely. Never put a key in a command argument, chat, repository or issue.
-
-The connection check makes one small paid request using TypeSafe's published input pricing. A successful response must pass validation. A failed check is a setup failure, not a benchmark result. The plugin stays installed so you can correct the connection.
-
-Unattended installation finishes with a visible setup-required message when no key is available. Complete it later:
+Onboarding asks for your API source: Cloudflare, TypeSafe direct, OpenRouter, a compatible HTTPS endpoint, a custom adapter, or your existing MCP. Credentials belong to that provider. There is no mandatory TypeSafe account and no automatic paid fallback. [Provider options and adapter contract](providers.md).
 
 ```bash
 npx --yes github:thehan-co/jevriel setup
+# Or select a route directly:
+npx --yes github:thehan-co/jevriel setup --provider cloudflare
 npx --yes github:thehan-co/jevriel doctor
 ```
 
-To replace a saved key, remove only the credential file above or set a new `TYPESAFE_API_KEY`, then rerun setup. `JEVRIEL_CONFIG_DIR` changes the credential directory. No key is sent anywhere except the TypeSafe API by this runtime.
+Interactive setup requests credentials in a hidden terminal prompt, never in chat. Optional local credentials are stored as plaintext with owner-only permissions in `~/.config/jevriel/provider.json`. Use environment injection from your secret manager if preferred. `JEVRIEL_CONFIG_DIR` changes the directory. For older TypeSafe-only setups, the legacy credentials file remains readable when selecting TypeSafe.
 
-## Daily control and measurement
+Setup makes one small verification request under your selected provider's quota/billing. Unattended installs with incomplete configuration finish as setup-required. Selecting an existing MCP skips credential migration and verification calls; the skill uses that connector, while bundled inference remains disabled.
 
-Ask for `jevriel_status`, then choose automatic, enabled or disabled with `jevriel_session_mode`. Automatic means the agent follows the skill's decision policy. The server does not autonomously watch your work. Enabled still respects your permissions.
+A compatible endpoint receives only its explicitly configured credential. HTTPS redirects are rejected. Custom adapters run trusted local commands without a shell. They are the extension point for APIs with different authentication or payload formats; arbitrary APIs are not assumed to share a contract.
 
-The runtime stores metadata receipts in `~/.local/state/jevriel/usage.jsonl`, including failed attempts. `JEVRIEL_LEDGER_DIR` changes that directory. Prompts, source documents, returned selections and credentials are not persisted there. Export only sanitized evidence you choose to share; there is no automatic community upload.
+## Pricing and runtime controls
 
-The default model is `jev-1.13.0`; `JEVRIEL_MODEL` overrides it. Discover a valid model before changing it, and record the resolved model in every comparison. Credentials for the hosted OpenRouter benchmark are separate from TypeSafe onboarding.
+Actual provider charges and free allowance are distinct from the TypeSafe published reference estimate. The plugin cannot infer that an account has remaining free quota. Choose auto/enabled/disabled with `jevriel_session_mode`; enabled never overrides user permissions or chooses another provider.
 
-## Updates and removal
+Metadata receipts go to `~/.local/state/jevriel/usage.jsonl`; configure `JEVRIEL_LEDGER_DIR` to change that home. No source text, answers or credentials are stored in the ledger. No automatic community upload exists.
 
-Rerun the installation command to update. Inspect the commit before upgrading a production deployment. Codex uses a fresh manifest cache suffix so a new thread picks up the changed tools. Use your host's plugin remove/uninstall command to disable it. Local credentials and receipts remain yours; remove them separately if desired.
+The default benchmark uses your selected JEV provider, plus a separate hosted OpenRouter LLM key for the baseline. An existing chat subscription is not inferred to cover either API.
 
-## Host qualification
+## Updates, existing connectors and qualification
 
-Codex local installation is verified separately in the release QA record. Claude packaging is prepared and schema-checked; live Claude execution is not implied unless the QA record says it ran. A host installation is not a frontier-model quality certification.
+Rerun the installer to update. Existing Jev/JEV MCP installations are retained. The skill can use them after inspecting their contracts; installing this plugin does not prove replacement parity.
 
-## Existing Jev MCP installations
-
-Installing JEVRIEL does not remove or replace another Jev MCP. The skill can use an existing connector after inspecting its contract. This bundled runtime calls TypeSafe directly, so an AI Gateway credential from another connector cannot substitute for a TypeSafe key. Keep current workflows on their existing connection until coverage, behavior and credentials have been checked. Avoid asking an agent to call both connectors for the same decision unless you are deliberately comparing them.
+Use the host's removal command to disable the plugin. Local configuration and receipts remain yours. Codex installation and offline tests are recorded in the release QA file. Cloudflare/OpenRouter contract fixtures and Claude manifest validation do not imply completed live provider tests or frontier-model certification.

@@ -1,7 +1,6 @@
 {
   "jev": {
-    "kind": "typesafe",
-    "model": "jev-1.13.0"
+    "kind": "jevriel"
   },
   "llm": {
     "kind": "openrouter",

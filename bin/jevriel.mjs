@@ -6,28 +6,42 @@ import {fileURLToPath} from 'node:url';
 import {spawnSync} from 'node:child_process';
 import {getKey,configDir,credentialFile} from '../server/credentials.mjs';
 import {execute} from '../server/runtime.mjs';
+import {connection,providerFile,savedProvider} from '../server/providers.mjs';
+import {createInterface} from 'node:readline/promises';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const [command='help',host='codex',...flags]=process.argv.slice(2);
 const run=(cmd,args)=>{const p=spawnSync(cmd,args,{stdio:'inherit'});if(p.error||p.status!==0)throw new Error(`${cmd} failed. Install its CLI and retry. Existing files have been retained.`);};
-function hiddenKey(){
+function hiddenKey(label="Provider API key/token"){
  if(!process.stdin.isTTY)return Promise.resolve(null);
- process.stdout.write('TypeSafe API key (hidden; saved locally with owner-only permissions): ');
+ process.stdout.write(label+' (hidden; saved locally with owner-only permissions): ');
  return new Promise((ok,no)=>{let value='';process.stdin.setRawMode(true);process.stdin.resume();process.stdin.setEncoding('utf8');
  const done=()=>{process.stdin.setRawMode(false);process.stdin.pause();process.stdin.off('data',on);process.stdout.write('\n');};
  const on=chunk=>{for(const c of chunk){if(c==='\u0003'){done();no(new Error('Setup cancelled. Plugin remains installed.'));return;}if(c==='\r'||c==='\n'){done();ok(value.trim());return;}if(c==='\u007f')value=value.slice(0,-1);else if(c>=' ')value+=c;}};process.stdin.on('data',on);});
 }
+async function ask(label){if(!process.stdin.isTTY)return '';const rl=createInterface({input:process.stdin,output:process.stdout});try{return (await rl.question(label)).trim();}finally{rl.close();}}
 async function setup(){
- let key=getKey();
- if(!key){
-  console.log('Get your TypeSafe API key from https://typesafe.ai and keep it out of chat and source control.');
-  key=await hiddenKey();
-  if(!key){console.log('Installed; TypeSafe connection setup required. Run: npx --yes github:thehan-co/jevriel setup');return false;}
-  mkdirSync(configDir(),{recursive:true,mode:0o700});
-  writeFileSync(credentialFile(),JSON.stringify({api_key:key})+'\n',{mode:0o600});chmodSync(credentialFile(),0o600);
+ const args=process.argv.slice(3);const option=args.indexOf('--provider');
+ let selected=option>=0?args[option+1]:connection().provider;
+ if(selected==='unconfigured')selected=await ask('JEV provider: cloudflare / typesafe / openrouter / compatible / adapter / existing: ');
+ if(!['cloudflare','typesafe','openrouter','compatible','adapter','existing'].includes(selected)){console.log('Installed; provider connection setup required. Run: npx --yes github:thehan-co/jevriel setup');return false;}
+ const previous=savedProvider();let config=previous.provider===selected?previous:{provider:selected};
+ if(selected==='existing'){
+  mkdirSync(configDir(),{recursive:true,mode:0o700});writeFileSync(providerFile(),JSON.stringify(config)+'\n',{mode:0o600});chmodSync(providerFile(),0o600);
+  console.log('Use your existing JEV MCP with the JEVRIEL skill. Bundled model calls stay disabled; no credential migration or paid call.');return true;
  }
- console.log('Checking TypeSafe with one small billable judgment (published input rate: $0.042/M).');
- await execute('jevriel_judge',{state:'Connection check: the light is green.',questions:{check:{type:'choice',instructions:'What color is the light?',criteria:{green:'Green',red:'Red'}}}},{apiKey:key});
- console.log('TypeSafe connection verified. Ready to start JEVing.');return true;
+ const setupEnv={...process.env,JEVRIEL_PROVIDER:selected};
+ if(selected==='typesafe'&&!setupEnv.TYPESAFE_API_KEY)setupEnv.TYPESAFE_API_KEY=getKey()||'';
+ let c=connection(setupEnv,config);
+ if(selected==='cloudflare'&&!c.account)config.account_id=await ask('Cloudflare account ID: ');
+ if(selected==='compatible'&&!c.endpoint){config.endpoint=await ask('Trusted JEV-compatible HTTPS endpoint (credentials are sent only here): ');config.model=await ask('Provider JEV model ID: ');}
+ if(selected==='adapter'&&!c.argv)config.argv=JSON.parse(await ask('Trusted local adapter command as a JSON argv array (no shell; no keys): '));
+ if(!c.key&&selected!=='adapter'){console.log('Use credentials for your chosen provider, not a TypeSafe key unless you selected TypeSafe. Keep keys out of chat and source control.');config.api_key=await hiddenKey(selected+' API key/token');}
+ c=connection(setupEnv,config);
+ if(!c.configured){console.log('Installed; provider connection setup required. Complete the selected provider credentials and account/endpoint, then rerun setup.');return false;}
+ mkdirSync(configDir(),{recursive:true,mode:0o700});writeFileSync(providerFile(),JSON.stringify(config)+'\n',{mode:0o600});chmodSync(providerFile(),0o600);
+ console.log('Checking '+selected+' with one small JEV request. Your provider quota and billing apply; no automatic paid fallback.');
+ await execute('jevriel_judge',{state:'Connection check: the light is green.',questions:{check:{type:'choice',instructions:'What color is the light?',criteria:{green:'Green',red:'Red'}}}},{connection:c});
+ console.log('JEV provider connection verified. Ready to start JEVing.');return true;
 }
 function registerCodex(){
  const base=join(homedir(),'.agents','plugins'), target=join(homedir(),'plugins','jevriel');
@@ -55,7 +69,7 @@ try{
   else throw new Error('Choose codex or claude.');
   if(!flags.includes('--skip-setup'))await setup();
  }else if(command==='setup')await setup();
- else if(command==='doctor'){console.log(JSON.stringify(await execute('jevriel_status'),null,2));if(!getKey())process.exitCode=2;}
+ else if(command==='doctor'){console.log(JSON.stringify(await execute('jevriel_status'),null,2));if(!connection().configured&&!connection().external_connector)process.exitCode=2;}
  else if(command==='benchmark'){run('python3',[join(root,'benchmark','flight_test.py'),...process.argv.slice(3)]);}
- else console.log('JEVRIEL\n  jevriel install codex|claude [--skip-setup]\n  jevriel setup\n  jevriel doctor\n  jevriel benchmark --config <file> --out <new-directory>\nRuntime: Node.js 20+. Benchmark: Python 3.10+. Host CLI required.');
+ else console.log('JEVRIEL\n  jevriel install codex|claude [--skip-setup]\n  jevriel setup [--provider cloudflare|typesafe|openrouter|compatible|adapter|existing]\n  jevriel doctor\n  jevriel benchmark --config <file> --out <new-directory>\nRuntime: Node.js 20+. Benchmark: Python 3.10+. Host CLI required.');
 }catch(e){console.error(e.message);process.exitCode=1;}

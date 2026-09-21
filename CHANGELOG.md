@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1 - 2026-09-21
+
+- Explicit provider selection: Cloudflare, TypeSafe, OpenRouter, compatible HTTPS, custom API adapters, or existing MCP.
+- No automatic provider changes or paid fallback. Reference list pricing is separate from provider bills/free allowances.
+- Public benchmark follows the selected provider. Public spelling standardized to JEV.
+
 ## 0.1.0 - 2026-09-21
 
 - Portable JEVRIEL skill and four use-case guides.
