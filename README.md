@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/jevriel-header-color.png" alt="JEVRIEL: Give your AI JEV wings. An angel carries a blue AI agent through a blue and gold sky." width="640">
+  <img src="assets/jevriel-header-color.png" alt="JEVRIEL: Give your AI JEV wings. An angel carries a blue AI agent through a blue and gold sky." width="100%">
 </p>
 
 # JEVRIEL
