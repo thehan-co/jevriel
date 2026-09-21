@@ -1,4 +1,6 @@
-![JEVRIEL: a giant-winged angel lifts a blue AI coding agent through the clouds. Give your AI JEV wings.](assets/jevriel-flight-freehand-v1.png)
+<p align="center">
+  <img src="assets/jevriel-flight-freehand-v1.png" alt="JEVRIEL: a giant-winged angel lifts a blue AI coding agent through the clouds. Give your AI JEV wings." width="480">
+</p>
 
 # JEVRIEL
 
@@ -122,7 +124,9 @@ The launch comparison targets GPT-6 Astra, Claude Fable 5.1, Gemini 3.8 Flash, D
 
 ### A little JEVine consultation
 
-![A seated male angel advises a blue AI agent at a desk, pointing to one of three choices.](assets/jevriel-adviser-freehand-v1.png)
+<p align="center">
+  <img src="assets/jevriel-adviser-freehand-v1.png" alt="A seated male angel advises a blue AI agent at a desk, pointing to one of three choices." width="360">
+</p>
 
 Sometimes the useful contribution is one small decision at the right moment. JEVRIEL teaches your agent to bring JEV the relevant evidence, ask a clear question, and keep uncertainty visible.
 
