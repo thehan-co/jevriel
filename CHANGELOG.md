@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.2
+
+- Put existing-MCP reuse first in interactive onboarding.
+- Report safe HTTP authentication, access and quota diagnostics.
+- Allow hidden replacement of a saved token with `setup --replace-key`.
+
+
 ## 0.1.1 - 2026-09-21
 
 - Explicit provider selection: Cloudflare, TypeSafe, OpenRouter, compatible HTTPS, custom API adapters, or existing MCP.

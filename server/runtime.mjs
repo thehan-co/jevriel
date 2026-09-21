@@ -37,6 +37,7 @@ export async function execute(name,input={},deps={}) {
  }
  const handler=handlers[internal];assert(handler,'Unknown tool');
  const c=deps.connection??(deps.apiKey?{provider:'typesafe',key:deps.apiKey,model:'jev-1.13.0',configured:true}:connection());
+ let providerFailure=null;
  const started=performance.now();let receipt={id:randomUUID(),at:new Date().toISOString(),tool:name,provider:c.provider,requested_model:c.model,resolved_model:null,comparison_model:input.comparison_model??null,status:'error',attempts:0,input_tokens:null,output_tokens:null,estimated_input_cost_usd:null};
  // Reserve writable ledger before inference. Never send a request if its ledger cannot be opened.
  if(!deps.noLedger)mkdirSync(ledgerDir(),{recursive:true,mode:0o700});
@@ -55,6 +56,12 @@ export async function execute(name,input={},deps={}) {
    let response;
    if(c.provider==='adapter')response=runAdapter(c,packet);
    else {const req=requestFor(c,packet);response=await (deps.fetchImpl??fetch)(req.url,{...options,headers:req.headers,body:JSON.stringify(req.body),redirect:'error'});}
+   if(!response.ok){
+    receipt.http_status=response.status;
+    const reason=response.status===401?'Authentication failed. Check the selected provider token.':response.status===403?'Access denied. Check account access and model permissions.':response.status===429?'Rate or quota limit reached. Check your provider allowance.':'Request rejected. Check the selected provider service and endpoint.';
+    providerFailure=`JEV provider HTTP ${response.status}: ${reason} To replace a saved token, run setup --replace-key. To reuse a connected MCP, run setup --provider existing.`;
+    throw new Error('Provider request rejected');
+   }
    let body;try{body=unwrap(c,await response.json());}catch{throw new Error('Invalid provider JSON');}
    receipt.resolved_model=typeof body?.model==='string'?body.model:null;
    receipt.input_tokens=tokens(body?.usage?.input_tokens);receipt.output_tokens=tokens(body?.usage?.output_tokens);
@@ -68,7 +75,7 @@ export async function execute(name,input={},deps={}) {
   return {...result,provider:c.provider,actual_cost_usd:null,actual_cost_basis:'unknown; check provider billing or allowance',typesafe_reference_input_cost_usd:receipt.estimated_input_cost_usd,requested_model:receipt.requested_model,resolved_model:receipt.resolved_model,attempts:receipt.attempts,receipt_id:receipt.id,estimated_input_cost_usd:receipt.estimated_input_cost_usd,cost_basis:'TypeSafe reference estimate, not provider bill',authority:'advisory_only'};
  } catch(e) {
   // Do not expose provider response text, input content or credentials.
-  const safe=/^(Provider setup required|Jev is disabled)/.test(e.message)?e.message:'Jev judgment failed validation or execution. Review or use the declared fallback; inspect the receipt status.';
+  const safe=providerFailure??(/^(Provider setup required|Jev is disabled)/.test(e.message)?e.message:'Jev judgment failed validation or execution. Review or use the declared fallback; inspect the receipt status.');
   throw new Error(safe);
  } finally {
   receipt.elapsed_ms=Number((performance.now()-started).toFixed(3));

@@ -41,3 +41,9 @@ The default benchmark uses your selected JEV provider, plus a separate hosted Op
 Rerun the installer to update. Existing Jev/JEV MCP installations are retained. The skill can use them after inspecting their contracts; installing this plugin does not prove replacement parity.
 
 Use the host's removal command to disable the plugin. Local configuration and receipts remain yours. Codex installation and offline tests are recorded in the release QA file. Cloudflare/OpenRouter contract fixtures and Claude manifest validation do not imply completed live provider tests or frontier-model certification.
+
+## Already connected? Skip new credentials
+
+If your agent already has a working JEV MCP, run `npx --yes github:thehan-co/jevriel setup --provider existing`. JEVRIEL supplies the skill while that MCP makes the requests. This does not migrate credentials or change the existing provider. Bundled inference and its default benchmark adapter remain disabled; use the existing connector or a configured custom benchmark adapter.
+
+Interactive setup lists this route first. For a failed direct connection, HTTP 401 means authentication failed; HTTP 403 means access denied; HTTP 429 means rate/quota limit. Replace a saved token with `npx --yes github:thehan-co/jevriel setup --replace-key`. Keys stay out of command arguments and chat.

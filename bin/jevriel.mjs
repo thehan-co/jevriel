@@ -22,9 +22,16 @@ async function ask(label){if(!process.stdin.isTTY)return '';const rl=createInter
 async function setup(){
  const args=process.argv.slice(3);const option=args.indexOf('--provider');
  let selected=option>=0?args[option+1]:connection().provider;
- if(selected==='unconfigured')selected=await ask('JEV provider: cloudflare / typesafe / openrouter / compatible / adapter / existing: ');
+ if(process.stdin.isTTY&&option<0){
+  console.log('Already have a working JEV MCP? Choose 1. No new API key is needed.');
+  console.log('1 existing MCP   2 Cloudflare   3 TypeSafe   4 OpenRouter   5 compatible endpoint   6 custom adapter');
+  const choice=await ask('Connection [current: '+selected+']: ');
+  selected=({'1':'existing','2':'cloudflare','3':'typesafe','4':'openrouter','5':'compatible','6':'adapter'})[choice]||choice||selected;
+ }
  if(!['cloudflare','typesafe','openrouter','compatible','adapter','existing'].includes(selected)){console.log('Installed; provider connection setup required. Run: npx --yes github:thehan-co/jevriel setup');return false;}
- const previous=savedProvider();let config=previous.provider===selected?previous:{provider:selected};
+ const previous=savedProvider();let config=previous.provider===selected?{...previous}:{provider:selected};
+ const replaceKey=args.includes('--replace-key');
+ if(replaceKey&&!process.stdin.isTTY)throw new Error('Run setup --replace-key in an interactive terminal; keys are never accepted as arguments.');
  if(selected==='existing'){
   mkdirSync(configDir(),{recursive:true,mode:0o700});writeFileSync(providerFile(),JSON.stringify(config)+'\n',{mode:0o600});chmodSync(providerFile(),0o600);
   console.log('Use your existing JEV MCP with the JEVRIEL skill. Bundled model calls stay disabled; no credential migration or paid call.');return true;
@@ -35,7 +42,9 @@ async function setup(){
  if(selected==='cloudflare'&&!c.account)config.account_id=await ask('Cloudflare account ID: ');
  if(selected==='compatible'&&!c.endpoint){config.endpoint=await ask('Trusted JEV-compatible HTTPS endpoint (credentials are sent only here): ');config.model=await ask('Provider JEV model ID: ');}
  if(selected==='adapter'&&!c.argv)config.argv=JSON.parse(await ask('Trusted local adapter command as a JSON argv array (no shell; no keys): '));
- if(!c.key&&selected!=='adapter'){console.log('Use credentials for your chosen provider, not a TypeSafe key unless you selected TypeSafe. Keep keys out of chat and source control.');config.api_key=await hiddenKey(selected+' API key/token');}
+ if((!c.key||replaceKey)&&selected!=='adapter'){console.log('Use credentials for your chosen provider, not a TypeSafe key unless you selected TypeSafe. Keep keys out of chat and source control.');config.api_key=await hiddenKey(selected+' API key/token');
+  if(replaceKey){for(const name of ['TYPESAFE_API_KEY','CLOUDFLARE_API_TOKEN','JEV_CLOUDFLARE_API_TOKEN','OPENROUTER_API_KEY','JEVRIEL_API_KEY'])delete setupEnv[name];console.log('Saved token will be tested. Provider environment variables still take precedence in future sessions.');}
+ }
  c=connection(setupEnv,config);
  if(!c.configured){console.log('Installed; provider connection setup required. Complete the selected provider credentials and account/endpoint, then rerun setup.');return false;}
  mkdirSync(configDir(),{recursive:true,mode:0o700});writeFileSync(providerFile(),JSON.stringify(config)+'\n',{mode:0o600});chmodSync(providerFile(),0o600);
@@ -71,5 +80,5 @@ try{
  }else if(command==='setup')await setup();
  else if(command==='doctor'){console.log(JSON.stringify(await execute('jevriel_status'),null,2));if(!connection().configured&&!connection().external_connector)process.exitCode=2;}
  else if(command==='benchmark'){run('python3',[join(root,'benchmark','flight_test.py'),...process.argv.slice(3)]);}
- else console.log('JEVRIEL\n  jevriel install codex|claude [--skip-setup]\n  jevriel setup [--provider cloudflare|typesafe|openrouter|compatible|adapter|existing]\n  jevriel doctor\n  jevriel benchmark --config <file> --out <new-directory>\nRuntime: Node.js 20+. Benchmark: Python 3.10+. Host CLI required.');
+ else console.log('JEVRIEL\n  jevriel install codex|claude [--skip-setup]\n  jevriel setup [--replace-key] [--provider cloudflare|typesafe|openrouter|compatible|adapter|existing]\n  jevriel doctor\n  jevriel benchmark --config <file> --out <new-directory>\nRuntime: Node.js 20+. Benchmark: Python 3.10+. Host CLI required.');
 }catch(e){console.error(e.message);process.exitCode=1;}

@@ -43,6 +43,9 @@ JEV returns typed decisions rather than arbitrary prose. A permitted output can 
 npx --yes github:thehan-co/jevriel install codex
 ```
 
+Already have a working JEV MCP? Choose **1: existing MCP** during setup. JEVRIEL adds its guidance and workflows without asking for another API key.
+
+
 **Claude Code**
 
 ```bash

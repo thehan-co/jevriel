@@ -29,3 +29,8 @@ test('OpenRouter uses native decisions API and its own credentials',()=>{
  const r=requestFor(c,{state:'x',questions:{}});
  assert.equal(r.url,'https://openrouter.ai/api/alpha/decisions');assert.equal(r.headers.authorization,'Bearer or-test');assert.equal(r.body.model,'typesafe/jev-1.13');
 });
+test('authentication failures report safe actionable HTTP status without provider secrets',async()=>{
+ let receipt;
+ await assert.rejects(execute('jevriel_route',{state:'x',instructions:'Choose',routes:{a:'a',b:'b'}},{apiKey:'test',noLedger:true,onReceipt:r=>receipt=r,fetchImpl:async()=>({ok:false,status:401,json:async()=>({errors:[{message:'secret must never be shown'}]})})}),e=>/HTTP 401: Authentication failed/.test(e.message)&&!e.message.includes('secret must'));
+ assert.equal(receipt.http_status,401);assert.equal(receipt.status,'error');
+});

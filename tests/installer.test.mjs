@@ -18,3 +18,11 @@ test('Codex installer preserves other entries and ships clean tools with deferre
   assert.ok(!existsSync(join(dir,'plugins/jevriel/benchmark/runs')));
  }finally{rmSync(dir,{recursive:true,force:true});}
 });
+test('existing MCP setup needs no key and clearly disables bundled inference',()=>{
+ const dir=mkdtempSync(join(tmpdir(),'jevriel-existing-'));
+ try{
+ const p=spawnSync(process.execPath,['bin/jevriel.mjs','setup','--provider','existing'],{env:{...process.env,JEVRIEL_CONFIG_DIR:dir},encoding:'utf8'});
+ assert.equal(p.status,0,p.stderr);assert.match(p.stdout,/Bundled model calls stay disabled/);
+ assert.equal(JSON.parse(readFileSync(join(dir,'provider.json'))).provider,'existing');
+ }finally{rmSync(dir,{recursive:true,force:true});}
+});

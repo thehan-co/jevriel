@@ -1,6 +1,6 @@
 {
   "name": "jevriel",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Start JEVing your work: inspect, integrate and measure TypeSafe JEV in apps and agents.",
   "author": {
     "name": "Han Rabinovitz",

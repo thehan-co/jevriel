@@ -9,6 +9,8 @@ Give your AI JEV wings. Turn the user's motivation into a small, measured TypeSa
 
 ## Installation and onboarding
 
+First check whether the host already has a working JEV MCP. If so, reuse its tools with this skill; no additional API key is needed. Select `setup --provider existing` for explicit existing-connector mode. This does not proxy its tools through the bundled runtime. Verify one small authorized request with the existing connector before claiming live readiness.
+
 When the bundled tools are available, call `jevriel_status` before live use. Provider selection and missing credentials are onboarding states, not a model failure. Guide the user through `npx --yes github:thehan-co/jevriel setup` in their local terminal; never ask for keys in chat. The installer includes this step automatically in an interactive terminal. A connection check uses one small JEV request under the selected provider's quota and billing. The plugin supports built-in routes, a compatible HTTPS endpoint, custom API adapters and reuse of an existing MCP. Never silently move a user to another provider. Use the existing installed JEV connector when appropriate and inspect its contract.
 
 Use [plugin-tools.md](references/plugin-tools.md) for bundled tool names, session controls, receipts and the benchmark command. Start JEVing with one useful decision, then measure the change.
