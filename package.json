@@ -1,0 +1,46 @@
+{
+  "name": "jevriel",
+  "version": "0.1.0",
+  "description": "Start JEVing your work: inspect, integrate and measure TypeSafe Jev in apps and agents.",
+  "type": "module",
+  "license": "Apache-2.0",
+  "author": "Han Rabinovitz",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thehan-co/jevriel.git"
+  },
+  "homepage": "https://github.com/thehan-co/jevriel",
+  "bin": {
+    "jevriel": "bin/jevriel.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "bin/",
+    "server/",
+    "vendor/",
+    "skills/",
+    "benchmark/",
+    "assets/jevriel-flight-freehand-v1.png",
+    "assets/jevriel-adviser-freehand-v1.png",
+    "assets/LICENSE.md",
+    "docs/",
+    ".codex-plugin/",
+    ".claude-plugin/",
+    ".mcp.json",
+    ".mcp.claude.json",
+    "README.md",
+    "LICENSE",
+    "NOTICE",
+    "SECURITY.md",
+    "CONTRIBUTING.md"
+  ],
+  "scripts": {
+    "test": "node --test tests/*.test.mjs benchmark/test-source-validation.mjs",
+    "start": "node server/index.mjs"
+  },
+  "optionalDependencies": {
+    "@modelcontextprotocol/sdk": "1.17.0"
+  }
+}

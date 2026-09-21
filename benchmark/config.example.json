@@ -1,0 +1,22 @@
+{
+  "jev": {
+    "kind": "typesafe",
+    "model": "jev-1.13.0"
+  },
+  "llm": {
+    "kind": "openrouter",
+    "model": "deepseek/deepseek-v4.1-flash",
+    "max_tokens": 100,
+    "reasoning_effort": "none"
+  },
+  "arms": [
+    "llm",
+    "jev",
+    "hybrid"
+  ],
+  "repeats": 1,
+  "threshold": 0.85,
+  "margin": 0.5,
+  "seed": 42,
+  "timeout_seconds": 45
+}

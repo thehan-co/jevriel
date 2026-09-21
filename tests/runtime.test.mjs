@@ -1,0 +1,15 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {execute,summarize} from '../server/runtime.mjs';
+const answer={type:'choice',choice:'a',confidence:.9,probabilities:{a:.9,b:.05,needs_review:.05}};
+const args={state:'sample',instructions:'Choose',routes:{a:'A',b:'B'}};
+const mock=a=>({apiKey:'test-only',noLedger:true,fetchImpl:async()=>({ok:true,status:200,json:async()=>({model:'jev-1.13.0',answers:{route:a},usage:{input_tokens:10,output_tokens:1}})})});
+test('valid route preserves native confidence and advisory authority',async()=>{const r=await execute('jevriel_route',args,mock(answer));assert.equal(r.route,'a');assert.equal(r.authority,'advisory_only');assert.equal(r.attempts,1);});
+for(const [label,a] of Object.entries({null:null,missingConfidence:{...answer,confidence:undefined},unknown:{...answer,choice:'outside'},nan:{...answer,confidence:NaN},badDistribution:{...answer,probabilities:{a:1,b:1,needs_review:1}},wrongType:{...answer,type:'score'}}))test(`reject ${label}`,async()=>{await assert.rejects(execute('jevriel_route',args,mock(a)));});
+test('unknown extraction candidate fails closed',async()=>{await assert.rejects(execute('jevriel_extract',{source:'x',fields:[{id:'f',instructions:'choose',candidates:[{id:'a',value:'A'}]}]},{...mock(answer),fetchImpl:async()=>({ok:true,status:200,json:async()=>({answers:{f:{...answer,choice:'outside',probabilities:{a:.9,no_match:.1}}}})})}));});
+test('missing independent answers fail closed',async()=>{await assert.rejects(execute('jevriel_judge',{state:'x',questions:{x:{type:'noul',instructions:'yes?',criteria:{true:'yes',false:'no'}}}},mock(answer)));});
+test('network failures recorded once without leaking errors',async()=>{let receipt;await assert.rejects(execute('jevriel_route',args,{...mock(answer),fetchImpl:async()=>{throw new Error('secret-value')},onReceipt:r=>receipt=r}),e=>!e.message.includes('secret-value'));assert.equal(receipt.status,'error');assert.equal(receipt.attempts,1);assert.equal(receipt.input_tokens,null);});
+test('missing usage stays unknown',()=>{const s=summarize([{status:'error',input_tokens:null,elapsed_ms:1,estimated_input_cost_usd:null}]);assert.equal(s.input_tokens,null);assert.equal(s.usage_unknown,1);assert.equal(s.failed,1);assert.equal(s.observed_baseline_run,false);});
+test('disabled mode prevents inference',async()=>{await execute('jevriel_session_mode',{mode:'disabled'});let calls=0;await assert.rejects(execute('jevriel_route',args,{...mock(answer),fetchImpl:async()=>{calls++;}}));assert.equal(calls,0);await execute('jevriel_session_mode',{mode:'auto'});});
+test('escalation refuses missing thresholds',async()=>{await assert.rejects(execute('jevriel_escalation_gate',{signals:[{id:'x',value:.9}]}));});
+test('escalation flags explicit threshold crossing without model call',async()=>{assert.equal((await execute('jevriel_escalation_gate',{signals:[{id:'x',value:.9,threshold:.8}]})).recommended_action,'review');});

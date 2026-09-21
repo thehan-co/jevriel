@@ -1,0 +1,37 @@
+name: Contribute a Flight Test
+description: Share a measured gain, regression or inconclusive result.
+title: "Flight Test: "
+body:
+  - type: textarea
+    id: junction
+    attributes:
+      label: Decision junction and desired benefit
+    validations:
+      required: true
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Evidence mode
+      options: [PROBE, CONTROLLED, OBSERVE]
+    validations:
+      required: true
+  - type: textarea
+    id: method
+    attributes:
+      label: Dataset, label provenance, model IDs and frozen policy
+    validations:
+      required: true
+  - type: textarea
+    id: results
+    attributes:
+      label: Latency, cost, fidelity, coverage and failures
+      description: Link sanitized receipts and pricing sources. Unknown is acceptable.
+    validations:
+      required: true
+  - type: checkboxes
+    id: rights
+    attributes:
+      label: Submission check
+      options:
+        - label: I have checked this submission for private data and credentials and identified dataset rights.
+          required: true

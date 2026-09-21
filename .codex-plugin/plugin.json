@@ -1,0 +1,27 @@
+{
+  "name": "jevriel",
+  "version": "0.1.0",
+  "description": "Start JEVing your work: inspect, integrate and measure TypeSafe Jev in apps and agents.",
+  "author": {
+    "name": "Han Rabinovitz",
+    "url": "https://github.com/thehan-co"
+  },
+  "homepage": "https://github.com/thehan-co/jevriel",
+  "repository": "https://github.com/thehan-co/jevriel",
+  "license": "Apache-2.0",
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "JEVRIEL",
+    "shortDescription": "Give your AI JEV wings.",
+    "longDescription": "An easy portal to build with Jev, upgrade LLM-only workflows and measure the result.",
+    "developerName": "Han Rabinovitz",
+    "category": "DeveloperTools",
+    "capabilities": [
+      "Read",
+      "Write",
+      "Network"
+    ],
+    "defaultPrompt": "Use JEVRIEL to find one useful decision in my workflow, integrate Jev and give me a Flight Card."
+  }
+}

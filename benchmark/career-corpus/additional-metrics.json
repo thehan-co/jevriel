@@ -1,0 +1,32 @@
+{
+  "arms": {
+    "jev": {
+      "individual_confidence_ge_0_8": 700.0,
+      "raw_individually_valid": 1693.0,
+      "raw_invalid_or_missing_items": 15.0,
+      "attempted_characters": 2670029.0,
+      "attempted_chunks": 1708.0,
+      "input_tokens": 1290999.0,
+      "list_price_estimate_usd": 0.05422195800000001,
+      "unknown_usage_calls": 1.0
+    },
+    "hosted": {
+      "individual_confidence_ge_0_8": 1691.0,
+      "raw_individually_valid": 1704.0,
+      "raw_invalid_or_missing_items": 4.0,
+      "attempted_characters": 2670029.0,
+      "attempted_chunks": 1708.0,
+      "input_tokens": 1073872.0,
+      "output_tokens": 68941.0,
+      "list_price_estimate_usd": 0.29750360000000026,
+      "unknown_usage_calls": 1.0
+    }
+  },
+  "notes": {
+    "scope": "All first attempts retained, including invalid rows and one hosted timeout. Continuation processed only previously unattempted batches.",
+    "individual_validity": "Schema validity only, not semantic correctness. Atomic batch acceptance is stricter and remains the operational measure.",
+    "confidence": "Common 0.8 cutoff is uncalibrated; values not known to be interchangeable.",
+    "jev_cost": "List-price estimate using recorded input tokens at $0.042/M; actual billed cost unavailable, promotions may differ.",
+    "hosted_cost": "API-reported costs in primary metrics; list-price estimate excludes requests without usage."
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "jevriel": {
+      "command": "node",
+      "args": [
+        "server/index.mjs"
+      ],
+      "cwd": ".",
+      "env_vars": [
+        "TYPESAFE_API_KEY",
+        "JEVRIEL_MODEL",
+        "JEVRIEL_LEDGER_DIR"
+      ],
+      "env": {}
+    }
+  }
+}

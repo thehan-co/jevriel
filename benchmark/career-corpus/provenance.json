@@ -1,0 +1,53 @@
+{
+  "source_experiment": "Completed Career Database paired classification run, 2026-09-21",
+  "status": "complete",
+  "started_at": "2026-09-21T10:25:24.608961+00:00",
+  "completed_at": "2026-09-21T10:54:43.547031+00:00",
+  "models": {
+    "jev": "typesafe-ai/jev",
+    "hosted": "openai/gpt-5.6-luna"
+  },
+  "concurrency": 1,
+  "retries": 0,
+  "seed": 20260921,
+  "latency": "end-to-end path latency; not intrinsic model inference",
+  "documents": 429,
+  "unique_text_hashes": 418,
+  "characters": 2670029,
+  "chunks_per_arm": 1708,
+  "client_groups": 82,
+  "class_catalog": [
+    {
+      "id": "commercial_proposal",
+      "description": "The dominant content is proposed engagement scope, fees, contract terms, or a work agreement; not evidence the work succeeded."
+    },
+    {
+      "id": "working_notes",
+      "description": "The dominant content is raw meeting/interview notes, transcript, or observations rather than a developed recommendation or general research explanation."
+    },
+    {
+      "id": "positioning_strategy",
+      "description": "The dominant content is developed client-specific positioning, branding, audience analysis, or recommendations; excludes raw notes and commercial terms."
+    },
+    {
+      "id": "achievement_evidence",
+      "description": "The dominant content reports a completed business milestone or measured result. A target, forecast, proposed benefit or unsupported attribution is insufficient. A company event does not establish Han contribution."
+    },
+    {
+      "id": "research_reference",
+      "description": "The dominant content explains a general method/framework or external research, without a developed client-specific recommendation."
+    },
+    {
+      "id": "other_unclear",
+      "description": "None of the defined genres can be assigned from the supplied content, including insufficient or ambiguous fragments."
+    }
+  ],
+  "source_file_hashes": {
+    "metrics.json": "89d962e78ca98fbeacbe1d9df2a54f896a75c0c25b39aaac93d43fdf1ea4b1a8",
+    "additional-metrics.json": "3ce7ab2159943c49ca943d689b70b77d3d16571b414966859512e68970114331",
+    "run-metadata.json": "b82bdb22da20bd750b005b19786c129d522b0689eff4a4fb2beff41fa92363ec",
+    "freeze-manifest.json": "c7d60c861ccb930b08bbc5957fc81660b8e172c5fa6cd1c1b79889794913a403"
+  },
+  "privacy": "Aggregate data only; original documents, client identities and individual predictions are not distributed.",
+  "quality": "Human-labeled accuracy pending; inter-model agreement is not accuracy."
+}

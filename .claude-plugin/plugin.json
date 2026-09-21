@@ -1,0 +1,16 @@
+{
+  "name": "jevriel",
+  "version": "0.1.0",
+  "description": "Start JEVing your work: inspect, integrate and measure TypeSafe Jev in apps and agents.",
+  "author": {
+    "name": "Han Rabinovitz",
+    "url": "https://github.com/thehan-co"
+  },
+  "homepage": "https://github.com/thehan-co/jevriel",
+  "repository": "https://github.com/thehan-co/jevriel",
+  "license": "Apache-2.0",
+  "skills": [
+    "./skills/jevriel"
+  ],
+  "mcpServers": "./.mcp.claude.json"
+}

@@ -1,0 +1,5 @@
+TypeSafe-as-a-Judge, Copyright 2026 Arik Aizikovich. Apache-2.0.
+Source: https://github.com/E-FL/typesafe-as-a-judge
+Pinned commit: d7a70549fcc539aabbe8645dd0e2ba44e0deffd0
+judge.mjs and session.mjs are unmodified; tools.mjs extracts TOOL_DEFINITIONS.
+JEVRIEL adds a separate validation/accounting adapter; no upstream endorsement implied.

@@ -1,0 +1,16 @@
+{
+  "name": "jevriel",
+  "owner": {
+    "name": "Han Rabinovitz"
+  },
+  "plugins": [
+    {
+      "name": "jevriel",
+      "source": "./",
+      "description": "Start JEVing your work: inspect, integrate and measure TypeSafe Jev in apps and agents."
+    }
+  ],
+  "metadata": {
+    "description": "JEVRIEL: start JEVing your work with TypeSafe Jev."
+  }
+}
