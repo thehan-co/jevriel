@@ -6,31 +6,95 @@
 
 **Give your AI JEV wings.**
 
-A skill and plugin that helps your AI agent build with TypeSafe JEV, upgrade existing LLM-only apps, and measure the results.
+JEVRIEL helps your AI agent use TypeSafe JEV for fast, structured decisions: route a request, rank evidence, classify a document or choose the next step. It helps you build the integration and measure whether it improves the work.
 
-[Install](#install-in-one-line) · [Use cases](#four-ways-to-use-jevriel) · [Benchmark](#the-jevriel-flight-test) · [Documentation](docs/installation.md) · [Contribute](CONTRIBUTING.md)
+**Choose your AI host, your JEV provider and how deeply to adopt it.**
 
-**Codex · Claude Code · Portable skill** | [Apache-2.0 code and docs](LICENSE) | Early release
+[Install](#install) · [Light or Deep](#choose-light-or-deep) · [Choose a provider](#connect-your-jev-api) · [Examples](#four-ways-to-use-jevriel) · [Measured results](#what-happened-on-429-real-documents) · [Documentation](docs/installation.md)
 
-Start JEVing your work: find a useful decision point, integrate JEV, and get a short before-and-after report on latency, cost and quality. Provider setup is required unless you already have a working JEV connection. Frontier evaluation is still in progress.
+**Codex · Claude Code · Portable skill and CLI** | [Apache-2.0](LICENSE) | [v0.2.0](docs/release-0.2.0.md)
 
-### Choose your level of adoption
+### Choose Light or Deep
 
-**Light:** call JEVRIEL when you want it. **Deep:** opt in once and your agent checks each workflow for useful JEV decisions, using your chosen API where it helps. Exact rules remain in code, writing remains with the LLM, and normal permissions still apply. [Activate or switch modes](docs/adoption.md).
+| | Light | Deep |
+|---|---|---|
+| **When it runs** | When you ask for JEVRIEL | Your agent assesses each workflow for useful JEV decisions |
+| **How you work** | Request a pilot, a judgment or a benchmark | Continue your normal work; the agent uses JEV where it can help |
+| **How it is enabled** | Default for new installations | Explicit opt-in through persistent host instructions |
 
-**Bring your JEV connection:** OpenRouter, TypeSafe, Cloudflare, an existing MCP, a compatible endpoint, or a custom adapter. Install once, select the provider, and keep using your preferred AI host. [Provider setup](docs/providers.md) · [Portable installation](docs/installation.md#any-fileterminal-capable-ai) · [Runnable example](examples/daily-triage/README.md).
+Deep makes JEV part of the agent's working policy. The agent considers each workflow, then chooses an appropriate tool. Exact calculations and rules stay in code; writing and extended reasoning stay with the LLM. JEV handles suitable bounded judgments within your permissions, privacy constraints and budget.
 
-### Why I built this
+Deep depends on the host loading and following its instructions. It does not intercept every tool call or require a JEV request for every step. [Full adoption policy](docs/adoption.md).
 
-Daniel Kahneman's *Thinking, Fast and Slow* is, in my opinion, one of the most important books ever written. His account of fast, intuitive System 1 and deliberate System 2 gives me a useful way to think about building with AI. It also reminds me that fast judgment can be wrong. [About the book](https://www.penguinrandomhouse.com/books/89308/thinking-fast-and-slow-by-daniel-kahneman/).
+### Install
 
-TypeSafe's JEV brings a fast decision model into the software around an AI agent. Give it relevant state and defined questions; it returns choices, scores or yes/no probabilities that code can use. Independent questions can share one request and run in parallel. [TypeSafe's introduction](https://docs.typesafe.ai/introduction).
+Choose **one** command for your host:
 
-**I see this as a breakthrough in how we build with AI: a decision capability we can place throughout a workflow.** JEV can help the larger agent decide where to spend its reasoning, attention and computation. That is what I mean by an AI catalyst.
+```bash
+# Codex
+npx --yes github:thehan-co/jevriel install codex
 
-I've connected JEV and put it into the triage and classification stages of my morning agent. I also ran a paired classification test on 429 documents, covering 2.67 million characters. Those experiments led to JEVRIEL: a way to teach other agents this pattern and check whether it actually helps.
+# Claude Code
+npx --yes github:thehan-co/jevriel install claude
 
-The angel supplies the wings. Your measurements decide whether they help.
+# Other AI hosts with file and terminal access
+npx --yes github:thehan-co/jevriel install portable
+```
+
+Requires Node.js 20+, npm and Git. Native plugin installation also requires the selected host's CLI. The interactive installer asks for your JEV connection and offers Light or Deep adoption. Start a new host session after installation.
+
+Portable installation supplies a Markdown skill and a local runtime. Point your agent at `~/.agents/skills/jevriel/SKILL.md`, or copy the skill to its documented skill directory. Hosts with MCP support can register the bundled server. [Installation details](docs/installation.md#any-fileterminal-capable-ai).
+
+### Connect your JEV API
+
+Use **OpenRouter, TypeSafe direct, Cloudflare, an existing JEV MCP, a compatible HTTPS endpoint or a custom adapter**. Your AI host and JEV provider are independent choices.
+
+For example, connect through OpenRouter using your OpenRouter API key:
+
+```bash
+npx --yes github:thehan-co/jevriel setup --provider openrouter
+npx --yes github:thehan-co/jevriel doctor
+```
+
+Setup asks for the key in a hidden terminal prompt and makes one small verification request billed by your chosen provider. Secret-manager injection is also supported. `doctor` checks configuration without running inference.
+
+Already connected through a JEV MCP? Choose **existing MCP** during setup. For an API with a different request or authentication format, supply a custom adapter. [Provider choices and adapter guide](docs/providers.md).
+
+### Enable Deep across your work
+
+You can choose Deep during interactive installation, or enable it afterward:
+
+```bash
+# Install the shared policy, including when you already use a native plugin.
+npx --yes github:thehan-co/jevriel install portable --skip-setup
+
+# Choose the instruction file for your host. Codex example:
+npx --yes github:thehan-co/jevriel adoption deep --instructions "$HOME/.codex/AGENTS.md"
+
+# For Claude Code, use "$HOME/.claude/CLAUDE.md" instead.
+```
+
+This adds a managed policy pointer while preserving other instructions. Other hosts can use their own documented persistent instruction file. Start a new session to load the policy. Provider setup is separate.
+
+Switch back to manual use whenever you want:
+
+```bash
+npx --yes github:thehan-co/jevriel adoption light
+```
+
+[Adoption settings, host verification and controls](docs/adoption.md).
+
+### Try one useful decision
+
+Ask your agent:
+
+> Use JEVRIEL to inspect this app. Find one decision where TypeSafe JEV could reduce latency or cost without hurting quality. Implement a reversible pilot and give me a JEVRIEL Flight Card.
+
+For daily work, try:
+
+> Use JEVRIEL to classify these notes as tasks, references, meetings or manual review. Keep ambiguous items for review and show the usage receipt.
+
+The [runnable daily triage example](examples/daily-triage/README.md) uses synthetic data and shows how typed judgments become application decisions. The runtime also supports routing, ranking, candidate extraction, evidence verification and shared-state questions. [Tool guide](docs/tools.md).
 
 ### What JEV brings to the work
 
@@ -42,35 +106,6 @@ The angel supplies the wings. Your measurements decide whether they help.
 | An agent drafts a claim | A judgment of support in supplied evidence | Source checking and accountability |
 
 JEV returns typed decisions rather than arbitrary prose. A permitted output can still be the wrong decision. Exact calculations, dates, permissions and validation belong in code; open-ended reasoning and writing remain jobs for a suitable LLM. [Known weaknesses](https://docs.typesafe.ai/model-jaggedness/jev-1.13).
-
-### Install in one line
-
-**Codex**
-
-```bash
-npx --yes github:thehan-co/jevriel install codex
-```
-
-Already have a working JEV MCP? Choose **1: existing MCP** during setup. JEVRIEL adds its guidance and workflows without asking for another API key.
-
-
-**Claude Code**
-
-```bash
-npx --yes github:thehan-co/jevriel install claude
-```
-
-Requires Node.js 20+, npm, Git and the selected host's CLI. This installs from GitHub; no npm registry publication is required. The installer preserves existing marketplace entries and then asks how you want to connect to JEV.
-
-Choose Cloudflare, TypeSafe direct, OpenRouter, an existing MCP, a JEV-compatible HTTPS endpoint, or a custom adapter for another API. Credentials belong to your selected provider. Interactive setup uses a hidden prompt; a secret manager can supply environment variables instead. One small verification request uses that provider's quota and billing. There is no automatic paid fallback. In unattended installs, run `npx --yes github:thehan-co/jevriel setup` afterward. [Setup and credential details](docs/installation.md) · [Provider and custom adapter guide](docs/providers.md).
-
-Start a new host session, then ask:
-
-> Use JEVRIEL to inspect this app. Find one decision where TypeSafe JEV could reduce latency or cost without hurting quality. Implement a reversible pilot and give me a JEVRIEL Flight Card.
-
-You get an opportunity map, one focused implementation, verification and suggestions for where to embed JEV next. The installed runtime includes routing, ranking, candidate extraction, evidence verification, shared-state judgments, session controls and usage receipts. [Tool guide](docs/tools.md).
-
-**Skill only:** copy [the `skills/jevriel` folder](skills/jevriel) into your agent's documented skill directory, or ask it to read `SKILL.md`. Keep a repository checkout for the benchmark, or use the npm benchmark command. An existing JEV connection can be used instead of the bundled runtime.
 
 ### Four ways to use JEVRIEL
 
@@ -127,6 +162,18 @@ We are testing the JEV skill on JEV's own homework: **70 TypeSafe documentation 
 The launch comparison targets GPT-6 Astra, Claude Fable 5.1, Gemini 3.8 Flash, DeepSeek V4.1 Flash and GLM 5.3 Flash through OpenRouter. Each model sees each source once and returns all five classifications together to avoid repeated input tokens. JEV estimates use [TypeSafe's published list price](https://docs.typesafe.ai/models).
 
 **Frontier evaluation pending:** The prepared run has not completed. No local-model comparison is used as launch evidence. Final numerical claims and host qualification await the frontier run.
+
+### Why I built this
+
+Daniel Kahneman's *Thinking, Fast and Slow* is, in my opinion, one of the most important books ever written. His account of fast, intuitive System 1 and deliberate System 2 gives me a useful way to think about building with AI. It also reminds me that fast judgment can be wrong. [About the book](https://www.penguinrandomhouse.com/books/89308/thinking-fast-and-slow-by-daniel-kahneman/).
+
+TypeSafe's JEV brings a fast decision model into the software around an AI agent. Give it relevant state and defined questions; it returns choices, scores or yes/no probabilities that code can use. Independent questions can share one request and run in parallel. [TypeSafe's introduction](https://docs.typesafe.ai/introduction).
+
+**I see this as a breakthrough in how we build with AI: a decision capability we can place throughout a workflow.** JEV can help the larger agent decide where to spend its reasoning, attention and computation. That is what I mean by an AI catalyst.
+
+I've connected JEV and put it into the triage and classification stages of my morning agent. I also ran a paired classification test on 429 documents, covering 2.67 million characters. Those experiments led to JEVRIEL: a way to teach other agents this pattern and check whether it actually helps.
+
+The angel supplies the wings. Your measurements decide whether they help.
 
 ### A little JEVine consultation
 
