@@ -1,6 +1,6 @@
 # TypeSafe JEV implementation contract
 
-Checked 2026-09-21 against TypeSafe's public API and model documentation. Refresh before implementation; pin the returned version in benchmark receipts.
+Checked 2026-09-28 against TypeSafe's public API and model documentation. Refresh before implementation; pin the returned version in benchmark receipts.
 
 JEV consumes text or structured JSON state and typed questions. It returns decisions rather than arbitrary generated prose. Native Choice returns `choice`, `probabilities`, and `confidence`; Score returns a probability-weighted `score`, `legend`, `probabilities`, and `confidence`; Noul returns `noul`, the probability of yes, with no separate confidence field.
 
@@ -43,3 +43,11 @@ Sources: [API](https://docs.typesafe.ai/api), [confidence](https://docs.typesafe
 In the author's separate 429-document paired classification experiment, the JEV MCP path produced 12 invalid batches out of 489, including missing/null classifications. Validate the complete expected item set at the application boundary even when the native model's output contract is typed. Distinguish transport/wrapper/schema reliability from semantic accuracy, and record whether batch acceptance is atomic. The experiment's faster request timing did not establish an accuracy advantage; human review remained pending.
 
 Question IDs are not sent to the model. Instructions must identify the subject and intended judgment without relying on the ID. Structured instructions and criteria can supply examples and exclusions; check the selected wrapper schema before using them.
+
+## OpenRouter route
+
+Use `POST https://openrouter.ai/api/alpha/decisions` with `typesafe/jev-1.13` and an OpenRouter bearer key. The TypeScript SDK example uses `openrouter.alpha.decisions.create({decisionsRequest: packet})`; raw HTTP sends the packet directly. Do not send this request to Chat Completions. Capture the returned dated model ID and optional `usage.cost` rather than claiming the requested alias is immutable or substituting a tariff for observed cost.
+
+The native reference makes confidence/distributions optional at the schema level. JEVRIEL deliberately requires them for Choice/Score because its tools depend on those fields. Incomplete responses fail validation; a permissive SDK type does not make them safe to use.
+
+Sources: [Decisions API](https://openrouter.ai/docs/api/api-reference/alphadecisions/submit-a-decisions-request), [integration tutorial](https://openrouter.ai/blog/tutorials/how-to-use-jev/).

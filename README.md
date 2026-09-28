@@ -14,6 +14,12 @@ A skill and plugin that helps your AI agent build with TypeSafe JEV, upgrade exi
 
 Start JEVing your work: find a useful decision point, integrate JEV, and get a short before-and-after report on latency, cost and quality. Provider setup is required unless you already have a working JEV connection. Frontier evaluation is still in progress.
 
+### Choose your level of adoption
+
+**Light:** call JEVRIEL when you want it. **Deep:** opt in once and your agent checks each workflow for useful JEV decisions, using your chosen API where it helps. Exact rules remain in code, writing remains with the LLM, and normal permissions still apply. [Activate or switch modes](docs/adoption.md).
+
+**Bring your JEV connection:** OpenRouter, TypeSafe, Cloudflare, an existing MCP, a compatible endpoint, or a custom adapter. Install once, select the provider, and keep using your preferred AI host. [Provider setup](docs/providers.md) · [Portable installation](docs/installation.md#any-fileterminal-capable-ai) · [Runnable example](examples/daily-triage/README.md).
+
 ### Why I built this
 
 Daniel Kahneman's *Thinking, Fast and Slow* is, in my opinion, one of the most important books ever written. His account of fast, intuitive System 1 and deliberate System 2 gives me a useful way to think about building with AI. It also reminds me that fast judgment can be wrong. [About the book](https://www.penguinrandomhouse.com/books/89308/thinking-fast-and-slow-by-daniel-kahneman/).
@@ -151,3 +157,5 @@ Created by **Han Rabinovitz**. Its integration guidance incorporates lessons fro
 The research combines official contracts, dated public discussion, and implementation experience. X reports, Reddit comments and YouTube demos carry their own evidence labels. The [source guide](skills/jevriel/references/sources.md) distinguishes what was read, what was measured and what remains unverified.
 
 **Start with one useful decision. Measure the lift.**
+
+Release verification: [0.2.0 evidence and limits](docs/release-0.2.0.md).

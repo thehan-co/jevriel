@@ -4,20 +4,24 @@ import {join} from 'node:path';
 import {configDir,getKey} from './credentials.mjs';
 export const providerFile=()=>join(configDir(),'provider.json');
 export function savedProvider(){try{return JSON.parse(readFileSync(providerFile(),'utf8'));}catch{return {};}}
+const commandArgv = value => {try {return JSON.parse(value);} catch {throw new Error('Invalid command JSON configuration');}};
+const validArgv = value => Array.isArray(value) && value.length > 0 && value.every(x => typeof x === 'string' && x.length > 0);
 export function connection(env=process.env,saved=savedProvider()){
  const provider=env.JEVRIEL_PROVIDER||saved.provider||'unconfigured';
  if(saved.provider&&saved.provider!==provider)saved={};
  const defaults={typesafe:'jev-1.13.0',cloudflare:'typesafe/jev',openrouter:'typesafe/jev-1.13',compatible:'jev-latest',adapter:'provider-defined'};
  let key='';
- if(provider==='typesafe')key=env.TYPESAFE_API_KEY|| (env===process.env?getKey():'') || (saved.provider==='typesafe'?saved.api_key:'');
+ if(provider==='typesafe')key=env.TYPESAFE_API_KEY||(saved.provider==='typesafe'?saved.api_key:'')||(env===process.env&&!saved.key_command&&!env.JEVRIEL_KEY_COMMAND?getKey():'');
  if(provider==='cloudflare')key=env.JEV_CLOUDFLARE_API_TOKEN||env.CLOUDFLARE_API_TOKEN||(saved.provider==='cloudflare'?saved.api_key:'');
  if(provider==='openrouter')key=env.OPENROUTER_API_KEY||(saved.provider==='openrouter'?saved.api_key:'');
  if(provider==='compatible')key=env.JEVRIEL_API_KEY||(saved.provider==='compatible'?saved.api_key:'');
+ key=typeof key==='string'?key.trim():'';
  const account=env.CLOUDFLARE_ACCOUNT_ID||saved.account_id||'';
  const endpoint=env.JEVRIEL_ENDPOINT||saved.endpoint||'';
- const argv=env.JEVRIEL_ADAPTER_COMMAND?JSON.parse(env.JEVRIEL_ADAPTER_COMMAND):saved.argv;
+ const argv=env.JEVRIEL_ADAPTER_COMMAND?commandArgv(env.JEVRIEL_ADAPTER_COMMAND):saved.argv;
+ const keyCommand=env.JEVRIEL_KEY_COMMAND?commandArgv(env.JEVRIEL_KEY_COMMAND):saved.key_command;
  const model=env.JEVRIEL_MODEL||saved.model||defaults[provider]||null;
- return {provider,key,account,endpoint,model,argv,configured:provider==='adapter'?Boolean(Array.isArray(argv)&&argv.length&&argv.every(x=>typeof x==='string'&&x.length)):provider==='existing'?false:Boolean(key&&model&&(provider!=='cloudflare'||/^[a-f0-9]{32}$/i.test(account))&&(provider!=='compatible'||/^https:\/\//.test(endpoint))),external_connector:provider==='existing',pricing:'Provider invoice/allowance separate from TypeSafe published reference price'};
+ return {provider,key,keyCommand,account,endpoint,model,argv,configured:provider==='adapter'?validArgv(argv):provider==='existing'?false:Boolean(['typesafe','cloudflare','openrouter','compatible'].includes(provider)&&(key||validArgv(keyCommand))&&model&&(provider!=='cloudflare'||/^[a-f0-9]{32}$/i.test(account))&&(provider!=='compatible'||/^https:\/\//.test(endpoint))),external_connector:provider==='existing',pricing:'Provider invoice/allowance separate from TypeSafe published reference price'};
 }
 export function requestFor(c,packet){
  const headers={'content-type':'application/json',authorization:`Bearer ${c.key}`};
@@ -42,4 +46,17 @@ export function runAdapter(c,packet){
  const p=spawnSync(c.argv[0],c.argv.slice(1),{input:JSON.stringify(packet),encoding:'utf8',timeout:30000,maxBuffer:1024*1024,shell:false});
  if(p.error||p.status!==0)throw new Error('Provider adapter failed');
  const body=JSON.parse(p.stdout);return {ok:true,status:200,json:async()=>body};
+}
+
+// Credentials are resolved only for an explicitly requested inference, never by doctor.
+export function resolveCredential(c) {
+ if (c.key || !c.keyCommand) return c;
+ if (!validArgv(c.keyCommand)) throw new Error('Invalid credential command');
+ const p = spawnSync(c.keyCommand[0], c.keyCommand.slice(1), {
+  encoding: 'utf8', timeout: 15000, maxBuffer: 65536, shell: false,
+ });
+ if (p.error || p.status !== 0 || !p.stdout?.trim() || /[\r\n]/.test(p.stdout.trim())) {
+  throw new Error('Credential command failed. Unlock your secret manager and retry.');
+ }
+ return {...c, key: p.stdout.trim()};
 }

@@ -34,6 +34,8 @@ Actual provider charges and free allowance are distinct from the TypeSafe publis
 
 Metadata receipts go to `~/.local/state/jevriel/usage.jsonl`; configure `JEVRIEL_LEDGER_DIR` to change that home. No source text, answers or credentials are stored in the ledger. No automatic community upload exists.
 
+Interactive installation also offers Light or Deep adoption. Deep writes a persistent pointer only after you choose the host instruction file. Noninteractive installs preserve the existing preference and never silently opt into Deep.
+
 The default benchmark uses your selected JEV provider, plus a separate hosted OpenRouter LLM key for the baseline. An existing chat subscription is not inferred to cover either API.
 
 ## Updates, existing connectors and qualification
@@ -47,3 +49,18 @@ Use the host's removal command to disable the plugin. Local configuration and re
 If your agent already has a working JEV MCP, run `npx --yes github:thehan-co/jevriel setup --provider existing`. JEVRIEL supplies the skill while that MCP makes the requests. This does not migrate credentials or change the existing provider. Bundled inference and its default benchmark adapter remain disabled; use the existing connector or a configured custom benchmark adapter.
 
 Interactive setup lists this route first. For a failed direct connection, HTTP 401 means authentication failed; HTTP 403 means access denied; HTTP 429 means rate/quota limit. Replace a saved token with `npx --yes github:thehan-co/jevriel setup --replace-key`. Keys stay out of command arguments and chat.
+
+## Any file/terminal-capable AI
+
+```bash
+npx --yes github:thehan-co/jevriel install portable --skip-setup
+npx --yes github:thehan-co/jevriel setup --provider openrouter
+node "$HOME/.local/share/jevriel/bin/jevriel.mjs" doctor
+node "$HOME/.local/share/jevriel/bin/jevriel.mjs" judge --input packet.json
+```
+
+Portable installation places the skill at `~/.agents/skills/jevriel` and the runtime at `~/.local/share/jevriel`. Hosts that use another skill directory can read/copy the skill there. A generic MCP host can register command `node` with the absolute `~/.local/share/jevriel/server/index.mjs` path (expand `~` yourself). The bundled stdio server uses Node built-ins; the optional MCP SDK is for benchmark clients, not server startup.
+
+The JSON packet contains `state` and `questions`. Use `--input -` for stdin. The CLI and MCP share the same selected provider, validation and metadata ledger. CLI stdout contains results for your own storage; stderr reports failures without printing malformed input. See the runnable [daily triage example](../examples/daily-triage/README.md).
+
+Choose [Light or Deep adoption](adoption.md). Light is manual invocation. Deep explicitly installs a persistent instruction hook so the agent considers JEV throughout its workflows. Installation alone never enables Deep.

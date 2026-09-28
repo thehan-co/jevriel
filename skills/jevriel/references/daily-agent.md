@@ -13,3 +13,5 @@ If JEV is unavailable, use the established manual/LLM process and report the gap
 Use Flight Test OBSERVE for real daily traffic: counts, categories, overrides, later corrections, missing-source coverage, added time and cost. Compare matched categories cautiously. A quieter day or a later cleanup is not causal evidence that JEV improved the workflow. Replay a consented, frozen sample if a controlled conclusion matters.
 
 Separate observed facts from inferred state, and recheck freshness before acting on a changed inbox or project. A reading queue can reuse relevance dimensions as your priorities change; new evidence or a changed rubric requires a new judgment. See [composition patterns](composition.md).
+
+A runnable synthetic triage packet and replayable policy ship in `examples/daily-triage/` in the full repository/runtime. Start with that before sending real material. Use the user's selected API; the AI host and JEV provider are independent choices. Keep a disagreement or missing record visible even if other judgments are confident.

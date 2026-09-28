@@ -6,7 +6,8 @@ import {route,rank,extract,verify,judge,escalationGate} from '../vendor/typesafe
 import {getSessionMode,setSessionMode,isJevEnabled} from '../vendor/typesafe-as-a-judge/session.mjs';
 import {TOOL_DEFINITIONS} from '../vendor/typesafe-as-a-judge/tools.mjs';
 import {validateAnswers,assert} from './validation.mjs';
-import {connection,requestFor,unwrap,runAdapter} from './providers.mjs';
+import {connection,requestFor,unwrap,runAdapter,resolveCredential} from './providers.mjs';
+import {adoption} from './adoption.mjs';
 const handlers={typesafe_route:route,typesafe_rank:rank,typesafe_extract:extract,typesafe_verify:verify,typesafe_judge:judge};
 const toPublic=name=>name.replace(/^typesafe_/,'jevriel_');
 export const definitions=TOOL_DEFINITIONS.map(t=>({...t,name:toPublic(t.name),description:t.description.replace(/typesafe_session_mode/g,'jevriel_session_mode')}));
@@ -15,11 +16,14 @@ definitions.push({name:'jevriel_status',description:'Check setup, model, session
 export const modelId=()=>connection().model;
 const ledgerDir=()=>process.env.JEVRIEL_LEDGER_DIR || join(homedir(),'.local','state','jevriel');
 const ledgerFile=()=>join(ledgerDir(),'usage.jsonl');
+const cost=v=>typeof v==='number'&&Number.isFinite(v)&&v>=0?v:null;
 const tokens=v=>Number.isSafeInteger(v)&&v>=0?v:null;
 export function summarize(rows) {
  const valid=rows.filter(r=>r.status==='ok');
- const known=rows.filter(r=>r.input_tokens!==null);
- return {calls:rows.length,successful:valid.length,failed:rows.length-valid.length,input_tokens:known.length===rows.length?known.reduce((s,r)=>s+r.input_tokens,0):null,known_input_tokens:known.reduce((s,r)=>s+r.input_tokens,0),usage_unknown:rows.length-known.length,total_elapsed_ms:rows.reduce((s,r)=>s+r.elapsed_ms,0),estimated_known_input_cost_usd:known.reduce((s,r)=>s+(r.estimated_input_cost_usd??0),0),actual_cost_usd:null,cost_basis:'TypeSafe published reference input rate $0.042/M, output free. Not the selected provider bill. Free-tier eligibility, remaining quota and billed costs are not inferred.',pricing_source:'https://docs.typesafe.ai/models',pricing_checked:'2026-09-21',observed_baseline_run:false,savings:'not measured',scope:'Local durable metadata ledger; no prompts, answers or credentials. Concurrent host processes may contribute.'};
+ const known=rows.filter(r=>tokens(r.input_tokens)!==null);
+ const billed=rows.filter(r=>cost(r.actual_cost_usd)!==null);
+ const knownCost=billed.reduce((sum,r)=>sum+r.actual_cost_usd,0);
+ return {calls:rows.length,successful:valid.length,failed:rows.length-valid.length,input_tokens:known.length===rows.length?known.reduce((s,r)=>s+r.input_tokens,0):null,known_input_tokens:known.reduce((s,r)=>s+r.input_tokens,0),usage_unknown:rows.length-known.length,total_elapsed_ms:rows.reduce((s,r)=>s+r.elapsed_ms,0),estimated_known_input_cost_usd:known.reduce((s,r)=>s+(r.estimated_input_cost_usd??0),0),actual_cost_usd:rows.length>0&&billed.length===rows.length?knownCost:null,known_actual_cost_usd:knownCost,cost_unknown:rows.length-billed.length,actual_cost_basis:'Provider-reported USD usage cost; not an invoice or remaining allowance. Missing and legacy costs remain unknown.',cost_basis:'TypeSafe published reference input rate $0.042/M, output free. Not the selected provider bill. Free-tier eligibility, remaining quota and billed costs are not inferred.',pricing_source:'https://docs.typesafe.ai/models',pricing_checked:'2026-09-28',observed_baseline_run:false,savings:'not measured',scope:'Local durable metadata ledger; no prompts, answers or credentials. Concurrent host processes may contribute.'};
 }
 export function usageSummary(filter={}) {
  let rows=[];try {rows=readFileSync(ledgerFile(),'utf8').split('\n').filter(Boolean).map(x=>JSON.parse(x));}catch(e){if(e.code!=='ENOENT')throw new Error('Ledger cannot be read');}
@@ -28,7 +32,7 @@ export function usageSummary(filter={}) {
 }
 export async function execute(name,input={},deps={}) {
  const internal=name.replace(/^jevriel_/,'typesafe_');
- if(name==='jevriel_status'){const c=connection();return {provider:c.provider,configured:c.configured,external_connector:c.external_connector,model:c.model,model_resolution:c.provider==='cloudflare'?'provider alias; version may change':'provider-reported',session:getSessionMode(),onboarding:'Run npx --yes github:thehan-co/jevriel setup; select your Jev provider or existing MCP',benchmark:new URL('../benchmark/flight_test.py',import.meta.url).pathname,ledger:'Local metadata; provider billing and TypeSafe reference estimates are separate'};}
+ if(name==='jevriel_status'){const c=connection();return {adoption:adoption(),provider:c.provider,configured:c.configured,external_connector:c.external_connector,model:c.model,model_resolution:c.provider==='cloudflare'?'provider alias; version may change':'provider-reported',session:getSessionMode(),onboarding:'Run npx --yes github:thehan-co/jevriel setup; select your Jev provider or existing MCP',benchmark:new URL('../benchmark/flight_test.py',import.meta.url).pathname,ledger:'Local metadata; provider billing and TypeSafe reference estimates are separate'};}
  if(internal==='typesafe_session_mode')return input.mode===undefined?getSessionMode():setSessionMode(input);
  if(internal==='typesafe_usage_summary')return usageSummary(input);
  if(internal==='typesafe_escalation_gate') {
@@ -36,15 +40,16 @@ export async function execute(name,input={},deps={}) {
   return escalationGate(input);
  }
  const handler=handlers[internal];assert(handler,'Unknown tool');
- const c=deps.connection??(deps.apiKey?{provider:'typesafe',key:deps.apiKey,model:'jev-1.13.0',configured:true}:connection());
+ let c=deps.connection??(deps.apiKey?{provider:'typesafe',key:deps.apiKey,model:'jev-1.13.0',configured:true}:connection());
  let providerFailure=null;
- const started=performance.now();let receipt={id:randomUUID(),at:new Date().toISOString(),tool:name,provider:c.provider,requested_model:c.model,resolved_model:null,comparison_model:input.comparison_model??null,status:'error',attempts:0,input_tokens:null,output_tokens:null,estimated_input_cost_usd:null};
+ const started=performance.now();let receipt={id:randomUUID(),at:new Date().toISOString(),tool:name,provider:c.provider,requested_model:c.model,resolved_model:null,comparison_model:input.comparison_model??null,status:'error',attempts:0,actual_cost_usd:null,provider_request_id:null,input_tokens:null,output_tokens:null,estimated_input_cost_usd:null};
  // Reserve writable ledger before inference. Never send a request if its ledger cannot be opened.
  if(!deps.noLedger)mkdirSync(ledgerDir(),{recursive:true,mode:0o700});
  if(!deps.noLedger)appendFileSync(ledgerFile(),'',{mode:0o600});
  try {
   assert(isJevEnabled(),'Jev is disabled for this session');
   assert(c.configured,'Provider setup required. Run: npx --yes github:thehan-co/jevriel setup; or use your existing Jev MCP');
+  if(c.provider!=='adapter')c=resolveCredential(c);
   const apiKey=c.key||'adapter-managed';
   const auditedFetch=async(url,options)=>{
    const packet=JSON.parse(options.body);packet.model=c.model;
@@ -64,6 +69,8 @@ export async function execute(name,input={},deps={}) {
    }
    let body;try{body=unwrap(c,await response.json());}catch{throw new Error('Invalid provider JSON');}
    receipt.resolved_model=typeof body?.model==='string'?body.model:null;
+   receipt.provider_request_id=typeof body?.id==='string'?body.id:null;
+   receipt.actual_cost_usd=cost(body?.usage?.cost);
    receipt.input_tokens=tokens(body?.usage?.input_tokens);receipt.output_tokens=tokens(body?.usage?.output_tokens);
    receipt.estimated_input_cost_usd=receipt.input_tokens===null?null:receipt.input_tokens*.042/1e6;
    if(!response.ok)throw new Error(`TypeSafe HTTP ${response.status}`);
@@ -72,10 +79,10 @@ export async function execute(name,input={},deps={}) {
   };
   const result=await handler(input,{apiKey,fetchImpl:auditedFetch,maxAttempts:1});
   receipt.status='ok';
-  return {...result,provider:c.provider,actual_cost_usd:null,actual_cost_basis:'unknown; check provider billing or allowance',typesafe_reference_input_cost_usd:receipt.estimated_input_cost_usd,requested_model:receipt.requested_model,resolved_model:receipt.resolved_model,attempts:receipt.attempts,receipt_id:receipt.id,estimated_input_cost_usd:receipt.estimated_input_cost_usd,cost_basis:'TypeSafe reference estimate, not provider bill',authority:'advisory_only'};
+  return {...result,provider:c.provider,actual_cost_usd:receipt.actual_cost_usd,actual_cost_basis:receipt.actual_cost_usd===null?'unknown; check provider billing or allowance':'Provider-reported usage.cost in USD; not an invoice or remaining allowance',provider_request_id:receipt.provider_request_id,typesafe_reference_input_cost_usd:receipt.estimated_input_cost_usd,requested_model:receipt.requested_model,resolved_model:receipt.resolved_model,attempts:receipt.attempts,receipt_id:receipt.id,estimated_input_cost_usd:receipt.estimated_input_cost_usd,cost_basis:'TypeSafe reference estimate, not provider bill',authority:'advisory_only'};
  } catch(e) {
   // Do not expose provider response text, input content or credentials.
-  const safe=providerFailure??(/^(Provider setup required|Jev is disabled)/.test(e.message)?e.message:'Jev judgment failed validation or execution. Review or use the declared fallback; inspect the receipt status.');
+  const safe=providerFailure??(/^(Provider setup required|Jev is disabled|Credential command failed)/.test(e.message)?e.message:'Jev judgment failed validation or execution. Review or use the declared fallback; inspect the receipt status.');
   throw new Error(safe);
  } finally {
   receipt.elapsed_ms=Number((performance.now()-started).toFixed(3));

@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.0 - 2026-09-28
+
+- Add explicit Light/manual and Deep/automatic workflow-assessment modes with reversible persistent instruction hooks.
+- Add portable user-level installation and a host-neutral JSON judgment CLI.
+- Support lazy secret-manager commands and unattended provider/model/endpoint/adapter configuration.
+- Preserve provider-reported USD costs, missing-cost coverage, request IDs and invalid-answer charges.
+- Add an original mixed-question daily-triage example with offline policy replay, plus a custom adapter template.
+- Refresh guidance from official OpenRouter and TypeSafe sources, retaining task-specific calibration and provider choice.
+
 ## 0.1.3
 
 - Align integration guidance with TypeSafe’s official skill and live pattern documentation.

@@ -41,3 +41,11 @@ Research checked 2026-09-21. TypeSafe JEV only. Refresh API, pricing and model c
 ## Evidence discipline
 
 The supplied AI-generated analysis PDF is background, not authoritative documentation. Its Java-specific digression is outside scope, and its high-confidence-as-immutable-fact guidance is rejected. Internal experiments inform the author's story but private raw material is not distributed with this skill. Claims must distinguish vendor report, third-party self-report, independently reproducible result, current local measurement and hypothesis.
+
+## OpenRouter refresh, 2026-09-28
+
+- [Practical JEV integration](https://openrouter.ai/blog/tutorials/how-to-use-jev/): state design, independent judgments and replayable policy. Tutorial results are author measurements, not JEVRIEL measurements.
+- [Decisions schema](https://openrouter.ai/docs/api/api-reference/alphadecisions/submit-a-decisions-request): native endpoint, model, optional response metadata and USD usage cost.
+- [JEV versus LLM](https://openrouter.ai/blog/tutorials/jev-vs-llm-when-to-use-each/): routing and draft-verification patterns; small source-authored benchmarks.
+- [Banking77 comparison](https://openrouter.ai/blog/insights/jev-vs-claude-opus-5-classification/): task-dependent accuracy tradeoffs; confidence cascades were explored on the same evaluation set. Do not transfer thresholds or claim frontier parity.
+- [Tool-call checks](https://openrouter.ai/docs/cookbook/building-agents/gate-tool-calls-with-jev): semantic checks complement deterministic permissions; no model grants authority.

@@ -8,10 +8,12 @@ JEVRIEL's separate adapter records the outgoing model (Cloudflare uses an unpinn
 
 The MCP process handles requests sequentially. It provides no file mutation, messaging or application execution tools. Its own side effect is the local metadata ledger. The installer changes plugin registration and optionally stores a local credential after user input. No automatic telemetry or dataset upload exists.
 
-The usage summary reports a TypeSafe published reference estimate separately from actual provider billing, which remains unknown without billing evidence. It cannot infer savings against an LLM that did not run. The dedicated Flight Test compares actual paths and includes fallback, startup, invalid outputs and errors. Historical corpus aggregates are reported separately from plugin qualification.
+The usage summary reports a TypeSafe published reference estimate separately from actual provider billing, which uses provider-reported USD costs where available and remains unknown otherwise. It cannot infer savings against an LLM that did not run. The dedicated Flight Test compares actual paths and includes fallback, startup, invalid outputs and errors. Historical corpus aggregates are reported separately from plugin qualification.
 
 ## Repository practice
 
 Owner: Han Rabinovitz. Source of truth: this repository, default branch `main`. Use focused branches and pull requests for contributions. Preserve unrelated dirty changes. Never commit credentials, local configs, private research, source documents or personal receipts. Release assets and installation instructions belong here; private project governance lives in the author's Vault project.
 
 The provider-neutral runtime supports native routes, explicitly configured compatible HTTPS endpoints and trusted local adapters for any API source. See [providers](providers.md). An existing MCP can be used by the skill without credential migration.
+
+Persistent Light/Deep adoption is separate from provider selection and the current MCP session switch. Host instruction hooks load a user-owned policy; they do not intercept arbitrary programs or authorize unrelated work.

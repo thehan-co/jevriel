@@ -18,7 +18,8 @@
         "OPENROUTER_API_KEY",
         "JEVRIEL_ENDPOINT",
         "JEVRIEL_API_KEY",
-        "JEVRIEL_ADAPTER_COMMAND"
+        "JEVRIEL_ADAPTER_COMMAND",
+        "JEVRIEL_KEY_COMMAND"
       ],
       "env": {}
     }

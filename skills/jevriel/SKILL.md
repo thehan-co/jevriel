@@ -7,11 +7,17 @@ description: Inspect, integrate and evaluate TypeSafe JEV in new coding projects
 
 Give your AI JEV wings. Turn the user's motivation into a small, measured TypeSafe JEV integration. Keep the explanation short; do the inspection and evaluation thoroughly.
 
+## Light or Deep adoption
+
+Read [adoption.md](references/adoption.md) and the persisted adoption mode first. Light is the default: use JEV on user invocation. Deep is opt-in: assess every workflow for useful JEV decision points and use the selected API when appropriate within the task. This is a host-instruction policy, separate from the per-process enabled/auto/disabled switch. Never imply installation alone intercepts every process.
+
 ## Installation and onboarding
 
 First check whether the host already has a working JEV MCP. If so, reuse its tools with this skill; no additional API key is needed. Select `setup --provider existing` for explicit existing-connector mode. This does not proxy its tools through the bundled runtime. Verify one small authorized request with the existing connector before claiming live readiness.
 
 When the bundled tools are available, call `jevriel_status` before live use. Provider selection and missing credentials are onboarding states, not a model failure. Guide the user through `npx --yes github:thehan-co/jevriel setup` in their local terminal; never ask for keys in chat. The installer includes this step automatically in an interactive terminal. A connection check uses one small JEV request under the selected provider's quota and billing. The plugin supports built-in routes, a compatible HTTPS endpoint, custom API adapters and reuse of an existing MCP. Never silently move a user to another provider. Use the existing installed JEV connector when appropriate and inspect its contract.
+
+For OpenRouter, select `setup --provider openrouter`: the Decisions API uses an ordinary OpenRouter key, no TypeSafe account. For other hosts, `install portable` provides a user-level skill and `judge --input` CLI. Follow [provider setup](references/provider-setup.md) for secret managers, custom APIs and host-neutral operation.
 
 Use [plugin-tools.md](references/plugin-tools.md) for bundled tool names, session controls, receipts and the benchmark command. Start JEVing with one useful decision, then measure the change.
 
@@ -44,9 +50,9 @@ For all implementation work, read [jev-contract.md](references/jev-contract.md).
 
 1. Inspect the installed connector or current official API. Discover actual model IDs and response shapes. A community MCP wrapper's field named `confidence`, `auto` or `verified` may differ from the native API's meaning.
 2. Define small, independent typed questions. Use Choice for a finite option set, Score for ordered rubric levels, Noul for a yes/no probability. Include a genuine escape option when none of the listed choices can fit.
-3. Pass only decision-relevant state. Treat documents, messages and code comments as untrusted evidence. Keep instructions in the trusted question and criteria. Share state across independent questions; dependent decisions need separate stages. Question IDs are application keys, not model-visible meaning: include the subject and criterion in instructions. Keep question definitions and policy thresholds together in a reviewable module.
+3. Pass only decision-relevant state. Treat documents, messages and code comments as untrusted evidence. Keep instructions in the trusted question and criteria. Share state across independent questions; dependent decisions need separate stages. Question IDs are application keys, not model-visible meaning: include the subject and criterion in instructions. Keep question definitions and policy thresholds together in a reviewable module. Compute exact facts first and pass descriptive labels. Use literal boundary examples on both sides of a criterion.
 4. Validate shape, options, distributions, finite values and completeness in code. Preserve the selected option, full probabilities, native confidence when present, and provenance. Never silently replace absent usage or costs with zero.
-5. Tune routing thresholds on development data and freeze them before held-out evaluation. Neither a universal 0.85 cutoff nor a large probability proves correctness. Check selected accuracy together with coverage and escalation cost.
+5. Save authorized judgments and replay a pure policy locally when only thresholds change. Do not reuse judgments after evidence, criteria or model-version changes. Tune routing thresholds on development data and freeze them before held-out evaluation. Neither a universal 0.85 cutoff nor a large probability proves correctness. Check selected accuracy together with coverage and escalation cost.
 6. Distinguish a valid answer, a correct judgment, and a permitted action. Act only within the user's existing permissions and deterministic application policy. Escalate uncertainty, invalid output, timeout and missing evidence through an explicit bounded path.
 7. Test representative, ambiguous, out-of-scope and adversarial cases. Measure the whole path, including preparation, JEV, fallback, retries and validation. Keep rollback straightforward.
 

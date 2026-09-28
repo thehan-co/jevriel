@@ -34,3 +34,13 @@ test('authentication failures report safe actionable HTTP status without provide
  await assert.rejects(execute('jevriel_route',{state:'x',instructions:'Choose',routes:{a:'a',b:'b'}},{apiKey:'test',noLedger:true,onReceipt:r=>receipt=r,fetchImpl:async()=>({ok:false,status:401,json:async()=>({errors:[{message:'secret must never be shown'}]})})}),e=>/HTTP 401: Authentication failed/.test(e.message)&&!e.message.includes('secret must'));
  assert.equal(receipt.http_status,401);assert.equal(receipt.status,'error');
 });
+
+test('credential command is lazy, bounded and environment key takes precedence',async()=>{
+ const {resolveCredential}=await import('../server/providers.mjs');
+ const c=connection({}, {provider:'openrouter',key_command:[process.execPath,'-e',"process.stdout.write('fixture-key\\n')"]});
+ assert.equal(c.configured,true);assert.equal(c.key,'');assert.equal(resolveCredential(c).key,'fixture-key');
+ assert.equal(resolveCredential({...c,key:'env-key',keyCommand:['does-not-exist']}).key,'env-key');
+ assert.throws(()=>resolveCredential({...c,keyCommand:[process.execPath,'-e',"console.error('sensitive-provider-details');process.exit(1)"]}),e=>/Credential command failed/.test(e.message)&&!e.message.includes('sensitive'));
+ assert.throws(()=>resolveCredential({...c,keyCommand:[process.execPath,'-e',"console.log('line1\\nline2')"]}));
+});
+test('unknown provider cannot be configured using a saved credential',()=>assert.equal(connection({}, {provider:'invented',api_key:'fixture',model:'test'}).configured,false));
