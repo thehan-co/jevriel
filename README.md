@@ -1,3 +1,5 @@
+> **Public release frozen, 19 October 2026.** This repository preserves JEVRIEL 0.2.0 under Apache-2.0. Future marketplace editions are developed privately. See [Han's Agensi storefront](https://www.agensi.io/creators/han-hanoch-rabinovitz) for current marketplace availability and [the release policy](docs/public-release-freeze.md) for the licensing and maintenance boundary. The last public release and its existing licence grants remain available.
+
 <p align="center">
   <img src="assets/jevriel-header-color.png" alt="JEVRIEL: Give your AI JEV wings. An angel carries a blue AI agent through a blue and gold sky." width="100%">
 </p>
